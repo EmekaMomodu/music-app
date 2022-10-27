@@ -1,1 +1,1 @@
-# ece9065-lab3-cmomodu
+# ece9065-cmomodu-lab3
