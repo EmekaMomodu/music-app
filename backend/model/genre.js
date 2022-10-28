@@ -4,13 +4,13 @@ const Schema = mongoose.Schema;
 
 const genreSchema = new Schema(
     {
-        id: {
+        genreId: {
             type: Number,
         },
         parentId: {
             type: Number,
         },
-        name: {
+        title: {
             type: String,
         }
     }

@@ -4,6 +4,7 @@ const Genre = require('../model/genre');
 
 exports.getGenres = (req, res, next) => {
     Genre.find()
+        .select({genreId: 1, parentId: 1, title: 1, _id: 0})
         .then(genres => {
             if(genres.length === 0){
                 const error = new Error(messages.NO_DATA_FOUND);

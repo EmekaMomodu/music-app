@@ -6,6 +6,7 @@ const Response = require('./model/response');
 
 const app = express();
 const port = 3000;
+const databaseConnectionUrl = 'mongodb+srv://ece9065:ece9065@cluster0.zry6vyf.mongodb.net/?retryWrites=true&w=majority';
 
 app.use(bodyParser.json());
 
@@ -26,12 +27,9 @@ app.use((error, req, res, next) => {
     res.status(status).json(response);
 });
 
-mongoose
-    .connect(
-      'mongodb+srv://ece9065:ece9065@cluster0.zry6vyf.mongodb.net/?retryWrites=true&w=majority'
-    )
+mongoose.connect(databaseConnectionUrl)
     .then(result => {
-        app.listen(port, () => {console.log(`listening on port ${port}`)});
+        app.listen(port, () => {console.log(`App listening on port ${port}`)});
     })
     .catch(err => console.log(err));
 
