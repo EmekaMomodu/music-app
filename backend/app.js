@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const genreRoutes = require('./route/genre');
-const Response = require('./model/response');
+const Response = require('./dto/response');
 
 const app = express();
 const port = 3000;
@@ -29,7 +29,9 @@ app.use((error, req, res, next) => {
 
 mongoose.connect(databaseConnectionUrl)
     .then(result => {
-        app.listen(port, () => {console.log(`App listening on port ${port}`)});
+        app.listen(port, () => {
+            console.log(`App listening on port ${port}`)
+        });
     })
     .catch(err => console.log(err));
 
