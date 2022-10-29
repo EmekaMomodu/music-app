@@ -5,4 +5,6 @@ const router = express.Router();
 
 router.get('/:id', trackController.getTrackById);
 
+router.get('', trackController.getNTracksByTitleOrAlbum);
+
 module.exports = router;
