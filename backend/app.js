@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const Response = require('./dto/response');
 const genreRoutes = require('./route/genre');
 const artistRoutes = require('./route/artist');
+const trackRoutes = require('./route/track');
 
 const app = express();
 const port = 3001;
@@ -22,6 +23,8 @@ app.use((req, res, next) => {
 app.use(`${pathPrefix}/genres`, genreRoutes);
 
 app.use(`${pathPrefix}/artists`, artistRoutes);
+
+app.use(`${pathPrefix}/tracks`, trackRoutes);
 
 app.use((error, req, res, next) => {
     console.log(error);

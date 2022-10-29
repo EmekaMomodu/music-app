@@ -3,7 +3,7 @@ const messages = require('../constant/message');
 const Genre = require('../model/genre');
 const GenreDto = require('../dto/genre');
 
-exports.getGenres = (req, res, next) => {
+exports.getAllGenres = (req, res, next) => {
     Genre.find()
         .then(genres => {
             if (genres.length === 0) {

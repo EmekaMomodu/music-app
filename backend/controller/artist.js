@@ -3,7 +3,7 @@ const messages = require('../constant/message');
 const Artist = require('../model/artist');
 const ArtistDto = require('../dto/artist');
 
-exports.getArtist = (req, res, next) => {
+exports.getArtistById = (req, res, next) => {
     const artistId = req.params.id;
     console.log("artistId ::: " + artistId);
     Artist.findOne({artist_id: artistId})
