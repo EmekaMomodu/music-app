@@ -14,7 +14,6 @@ exports.getGenres = (req, res, next) => {
             const foundGenres = genres.map((genre) => {
                 return new GenreDto(genre.genre_id, genre.title, genre.parent);
             });
-
             const response = new Response(messages.DATA_FETCHED_SUCCESSFULLY, foundGenres);
             res.status(200).json(response);
         })

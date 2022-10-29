@@ -1,12 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const genreRoutes = require('./route/genre');
 const Response = require('./dto/response');
+const genreRoutes = require('./route/genre');
+const artistRoutes = require('./route/artist');
 
 const app = express();
-const port = 3000;
+const port = 3001;
 const databaseConnectionUrl = 'mongodb+srv://ece9065:ece9065@cluster0.zry6vyf.mongodb.net/?retryWrites=true&w=majority';
+const pathPrefix = '/api';
 
 app.use(bodyParser.json());
 
@@ -17,7 +19,9 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/genres', genreRoutes);
+app.use(`${pathPrefix}/genres`, genreRoutes);
+
+app.use(`${pathPrefix}/artists`, artistRoutes);
 
 app.use((error, req, res, next) => {
     console.log(error);
