@@ -44,8 +44,8 @@ exports.getNTracksByTitleOrAlbum = (req, res, next) => {
     const n = req.query.n;
     console.log("searchText ::: " + searchText);
     console.log("n ::: " + n);
-    if(!searchText || !n){
-        const error = new Error(messages.ONE_OR_MORE_REQUIRED_REQUEST_PARAMETERS_ARE_MISSING);
+    if(!searchText || !n || !/^\+?([1-9]\d*)$/.test(n)){
+        const error = new Error(messages.ONE_OR_MORE_REQUIRED_REQUEST_PARAMETERS_ARE_MISSING_OR_INVALID);
         error.statusCode = 400;
         return next(error);
     }

@@ -5,4 +5,6 @@ const router = express.Router();
 
 router.get('/:id', artistController.getArtistById);
 
+router.get('', artistController.getAllArtistsByName);
+
 module.exports = router;
