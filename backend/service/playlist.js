@@ -1,4 +1,4 @@
-const messages = require('../constant/message');
+const messages = require('../util/message');
 const Playlist = require('../model/playlist');
 const Track = require('../model/track');
 const TrackDto = require("../dto/track");
@@ -19,7 +19,7 @@ exports.createPlaylist = async (playlist) => {
     // find if name already exists throw error if yes
     const existingPlaylist = await Playlist.findOne({name: {$regex: name, $options: 'i'}}).exec();
 
-    console.log("existingPlaylist ::: "  + existingPlaylist);
+    console.log("existingPlaylist ::: " + existingPlaylist);
 
     if (existingPlaylist) {
         const error = new Error(messages.PLAYLIST_NAME_ALREADY_EXISTS);
