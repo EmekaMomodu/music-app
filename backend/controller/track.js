@@ -44,14 +44,14 @@ exports.getNTracksByTitleOrAlbum = (req, res, next) => {
     const n = req.query.n;
     console.log("searchText ::: " + searchText);
     console.log("n ::: " + n);
-    if(!searchText || !n || !/^\+?([1-9]\d*)$/.test(n)){
+    if (!searchText || !n || !/^\+?([1-9]\d*)$/.test(n)) {
         const error = new Error(messages.ONE_OR_MORE_REQUIRED_REQUEST_PARAMETERS_ARE_MISSING_OR_INVALID);
         error.statusCode = 400;
         return next(error);
     }
     Track.find({
-        $or: [{ album_title: { $regex: '.*' + searchText + '.*', $options:'i' }  },
-                { track_title: { $regex: '.*' + searchText + '.*', $options:'i' }}]
+        $or: [{album_title: {$regex: '.*' + searchText + '.*', $options: 'i'}},
+            {track_title: {$regex: '.*' + searchText + '.*', $options: 'i'}}]
     }).limit(n)
         .then(tracks => {
             if (tracks.length === 0) {

@@ -39,12 +39,12 @@ exports.getArtistById = (req, res, next) => {
 exports.getAllArtistsByName = (req, res, next) => {
     const searchText = req.query.searchText;
     console.log("searchText ::: " + searchText);
-    if(!searchText){
+    if (!searchText) {
         const error = new Error(messages.ONE_OR_MORE_REQUIRED_REQUEST_PARAMETERS_ARE_MISSING_OR_INVALID);
         error.statusCode = 400;
         return next(error);
     }
-    Artist.find({artist_name: { $regex: '.*' + searchText + '.*', $options:'i' }})
+    Artist.find({artist_name: {$regex: '.*' + searchText + '.*', $options: 'i'}})
         .then(artists => {
             if (artists.length === 0) {
                 const error = new Error(messages.NO_DATA_FOUND);
