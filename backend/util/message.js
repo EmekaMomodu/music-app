@@ -6,6 +6,9 @@ const messages = {
     ONE_OR_MORE_IDS_ARE_INVALID: 'One/more IDs are invalid',
     UNABLE_TO_SAVE_DATA: 'Unable to save data',
     DATA_CREATED_SUCCESSFULLY: 'Data created successfully',
+    DATA_UPDATED_SUCCESSFULLY: 'Data updated successfully',
+    PLAYLIST_NAME_DOES_NOT_EXIST: 'Playlist name does NOT exists',
+    UNABLE_TO_UPDATE_DATA: 'Unable to update data',
 }
 
 module.exports = messages;

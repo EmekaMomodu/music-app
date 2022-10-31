@@ -5,4 +5,6 @@ const router = express.Router();
 
 router.post('', playlistController.createPlaylist);
 
+router.put('', playlistController.updatePlaylistByName);
+
 module.exports = router;

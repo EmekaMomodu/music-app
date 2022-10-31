@@ -12,3 +12,14 @@ exports.createPlaylist = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.updatePlaylistByName = async (req, res, next) => {
+    try {
+        const playlist = await playlistService.updatePlaylistByName(req.body);
+        const response = new Response(messages.DATA_UPDATED_SUCCESSFULLY, playlist);
+        res.status(200).json(response);
+    } catch (error) {
+        if (!error.statusCode) error.statusCode = 500;
+        next(error);
+    }
+};
