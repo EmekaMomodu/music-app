@@ -134,9 +134,44 @@ exports.updatePlaylistByName = async (playlist) => {
 
 exports.getPlaylistById = async (id) => {
 
-    console.log("id ::: " + id)
-
     const playlist = await Playlist.findById(id).exec();
+
+    if (!playlist) {
+        const error = new Error(messages.NO_DATA_FOUND);
+        error.statusCode = 404;
+        throw error;
+    }
+
+    const tracksDto = playlist.tracks.map((track) => {
+        return new TrackDto(
+            track.track_id || null,
+            track.album_id || null,
+            track.album_title || null,
+            track.artist_id || null,
+            track.artist_name || null,
+            track.tags || null,
+            track.track_date_created || null,
+            track.track_date_recorded || null,
+            track.track_duration || null,
+            track.track_genres || null,
+            track.track_number || null,
+            track.track_title || null
+        );
+    });
+
+    return new PlaylistDto(playlist._id, playlist.name, tracksDto);
+
+};
+
+exports.getPlaylistByName = async (name) => {
+
+    if (!name) {
+        const error = new Error(messages.ONE_OR_MORE_REQUIRED_REQUEST_PARAMETERS_ARE_MISSING_OR_INVALID);
+        error.statusCode = 400;
+        throw error;
+    }
+
+    const playlist =  await Playlist.findOne({name: {$regex: '^' + name + '$', $options: 'i'}}).exec();
 
     if (!playlist) {
         const error = new Error(messages.NO_DATA_FOUND);

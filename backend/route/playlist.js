@@ -9,4 +9,6 @@ router.put('', playlistController.updatePlaylistByName);
 
 router.get('/:id', playlistController.getPlaylistById);
 
+router.get('', playlistController.getPlaylistByName);
+
 module.exports = router;
