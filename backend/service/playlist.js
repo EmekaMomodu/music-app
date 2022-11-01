@@ -3,6 +3,7 @@ const Playlist = require('../model/playlist');
 const Track = require('../model/track');
 const TrackDto = require("../dto/track");
 const PlaylistDto = require('../dto/playlist');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 exports.createPlaylist = async (playlist) => {
 
@@ -134,6 +135,12 @@ exports.updatePlaylistByName = async (playlist) => {
 
 exports.getPlaylistById = async (id) => {
 
+    if(!ObjectId.isValid(id)){
+        const error = new Error(messages.INVALID_ID);
+        error.statusCode = 400;
+        throw error;
+    }
+
     const playlist = await Playlist.findById(id).exec();
 
     if (!playlist) {
@@ -163,63 +170,65 @@ exports.getPlaylistById = async (id) => {
 
 };
 
-exports.getPlaylistByName = async (name) => {
+exports.deletePlaylistById = async (id) => {
 
-    if (!name) {
-        const error = new Error(messages.ONE_OR_MORE_REQUIRED_REQUEST_PARAMETERS_ARE_MISSING_OR_INVALID);
+    if(!ObjectId.isValid(id)){
+        const error = new Error(messages.INVALID_ID);
         error.statusCode = 400;
         throw error;
     }
 
-    const playlist =  await Playlist.findOne({name: {$regex: '^' + name + '$', $options: 'i'}}).exec();
+    // find if id does not exist and throw error if yes
+    const existingPlaylist = await Playlist.findById(id).exec();
 
-    if (!playlist) {
+    if (!existingPlaylist) {
+        const error = new Error(messages.PLAYLIST_DOES_NOT_EXIST);
+        error.statusCode = 404;
+        throw error;
+    }
+
+    await Playlist.deleteOne({_id : id}).exec();
+};
+
+exports.getAllPlaylistInfo = async () => {
+
+    const playlists = await Playlist.find().exec();
+
+    if (!playlists || !playlists.length) {
         const error = new Error(messages.NO_DATA_FOUND);
         error.statusCode = 404;
         throw error;
     }
 
-    const tracksDto = playlist.tracks.map((track) => {
-        return new TrackDto(
-            track.track_id || null,
-            track.album_id || null,
-            track.album_title || null,
-            track.artist_id || null,
-            track.artist_name || null,
-            track.tags || null,
-            track.track_date_created || null,
-            track.track_date_recorded || null,
-            track.track_duration || null,
-            track.track_genres || null,
-            track.track_number || null,
-            track.track_title || null
-        );
-    });
+    // traverse playlist
+    // create object with name, tracks length, traverse tracks and calculate total play time
+    const result = [];
+    let item = {};
+    for(let playlist of playlists){
+        item.id = playlist._id;
+        item.name = playlist.name;
+        item.numberOfTracks = playlist.tracks.length;
+        let totalPlayTime = 0;
+        let trackDurationList;
+        let trackDuration;
+        for(let track of playlist.tracks){
+            if(!track.track_duration) continue;
+            trackDurationList = track.track_duration.split(':');
+            trackDuration = (Number(trackDurationList[0]) * 60) + Number(trackDurationList[1]);
+            totalPlayTime += trackDuration
+        }
+        let totalMinutes = Math.floor(totalPlayTime / 60);
+        let totalSeconds = totalPlayTime - (totalMinutes * 60);
 
-    return new PlaylistDto(playlist._id, playlist.name, tracksDto);
+        item.totalPlayTime = stringPadLeft(totalMinutes,'0',2) + ':' + stringPadLeft(totalSeconds,'0',2);
+
+        result.push(item);
+    }
+
+    return result;
 
 };
 
-exports.deletePlaylistByName = async (name) => {
-
-    if (!name) {
-        const error = new Error(messages.ONE_OR_MORE_REQUIRED_REQUEST_PARAMETERS_ARE_MISSING_OR_INVALID);
-        error.statusCode = 400;
-        throw error;
-    }
-
-    name = name.trim();
-
-    const condition = {name: {$regex: '^' + name + '$', $options: 'i'}};
-
-    // find if name does not exist and throw error if yes
-    const existingPlaylist = await Playlist.findOne(condition).exec();
-
-    if (!existingPlaylist) {
-        const error = new Error(messages.PLAYLIST_NAME_DOES_NOT_EXIST);
-        error.statusCode = 400;
-        throw error;
-    }
-
-    await Playlist.deleteOne(condition).exec();
-};
+const stringPadLeft = (string, pad, length) => {
+    return (new Array(length+1).join(pad)+string).slice(-length);
+}

@@ -35,10 +35,10 @@ exports.getPlaylistById = async (req, res, next) => {
     }
 };
 
-exports.getPlaylistByName = async (req, res, next) => {
+exports.deletePlaylistById = async (req, res, next) => {
     try {
-        const playlist = await playlistService.getPlaylistByName(req.query.name);
-        const response = new Response(messages.DATA_FETCHED_SUCCESSFULLY, playlist);
+        await playlistService.deletePlaylistById(req.params.id);
+        const response = new Response(messages.DATA_DELETED_SUCCESSFULLY, null);
         res.status(200).json(response);
     } catch (error) {
         if (!error.statusCode) error.statusCode = 500;
@@ -46,10 +46,10 @@ exports.getPlaylistByName = async (req, res, next) => {
     }
 };
 
-exports.deletePlaylistByName = async (req, res, next) => {
+exports.getAllPlaylistInfo = async (req, res, next) => {
     try {
-        await playlistService.deletePlaylistByName(req.query.name);
-        const response = new Response(messages.DATA_DELETED_SUCCESSFULLY, null);
+        const playlist = await playlistService.getAllPlaylistInfo();
+        const response = new Response(messages.DATA_FETCHED_SUCCESSFULLY, playlist);
         res.status(200).json(response);
     } catch (error) {
         if (!error.statusCode) error.statusCode = 500;
