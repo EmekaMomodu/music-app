@@ -46,7 +46,7 @@ exports.createPlaylist = async (playlist) => {
         throw error;
     }
 
-    const savedTracks = savedPlaylist.tracks.map((track) => {
+    const tracksDto = savedPlaylist.tracks.map((track) => {
         return new TrackDto(
             track.track_id || null,
             track.album_id || null,
@@ -63,7 +63,7 @@ exports.createPlaylist = async (playlist) => {
         );
     });
 
-    return new PlaylistDto(savedPlaylist._id, savedPlaylist.name, savedTracks);
+    return new PlaylistDto(savedPlaylist._id, savedPlaylist.name, tracksDto);
 
 };
 
@@ -111,7 +111,7 @@ exports.updatePlaylistByName = async (playlist) => {
         throw error;
     }
 
-    const updatedTracks = updatedPlaylist.tracks.map((track) => {
+    const tracksDto = updatedPlaylist.tracks.map((track) => {
         return new TrackDto(
             track.track_id || null,
             track.album_id || null,
@@ -128,6 +128,39 @@ exports.updatePlaylistByName = async (playlist) => {
         );
     });
 
-    return new PlaylistDto(updatedPlaylist._id, updatedPlaylist.name, updatedTracks);
+    return new PlaylistDto(updatedPlaylist._id, updatedPlaylist.name, tracksDto);
+
+};
+
+exports.getPlaylistById = async (id) => {
+
+    console.log("id ::: " + id)
+
+    const playlist = await Playlist.findById(id).exec();
+
+    if (!playlist) {
+        const error = new Error(messages.NO_DATA_FOUND);
+        error.statusCode = 404;
+        throw error;
+    }
+
+    const tracksDto = playlist.tracks.map((track) => {
+        return new TrackDto(
+            track.track_id || null,
+            track.album_id || null,
+            track.album_title || null,
+            track.artist_id || null,
+            track.artist_name || null,
+            track.tags || null,
+            track.track_date_created || null,
+            track.track_date_recorded || null,
+            track.track_duration || null,
+            track.track_genres || null,
+            track.track_number || null,
+            track.track_title || null
+        );
+    });
+
+    return new PlaylistDto(playlist._id, playlist.name, tracksDto);
 
 };

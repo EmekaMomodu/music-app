@@ -23,3 +23,14 @@ exports.updatePlaylistByName = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.getPlaylistById = async (req, res, next) => {
+    try {
+        const playlist = await playlistService.getPlaylistById(req.params.id);
+        const response = new Response(messages.DATA_FETCHED_SUCCESSFULLY, playlist);
+        res.status(200).json(response);
+    } catch (error) {
+        if (!error.statusCode) error.statusCode = 500;
+        next(error);
+    }
+};

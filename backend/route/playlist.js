@@ -7,4 +7,6 @@ router.post('', playlistController.createPlaylist);
 
 router.put('', playlistController.updatePlaylistByName);
 
+router.get('/:id', playlistController.getPlaylistById);
+
 module.exports = router;
