@@ -11,4 +11,6 @@ router.get('/:id', playlistController.getPlaylistById);
 
 router.get('', playlistController.getPlaylistByName);
 
+router.delete('', playlistController.deletePlaylistByName);
+
 module.exports = router;

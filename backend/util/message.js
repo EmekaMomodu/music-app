@@ -9,6 +9,7 @@ const messages = {
     DATA_UPDATED_SUCCESSFULLY: 'Data updated successfully',
     PLAYLIST_NAME_DOES_NOT_EXIST: 'Playlist name does NOT exists',
     UNABLE_TO_UPDATE_DATA: 'Unable to update data',
+    DATA_DELETED_SUCCESSFULLY: 'Data deleted successfully'
 }
 
 module.exports = messages;

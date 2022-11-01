@@ -45,3 +45,14 @@ exports.getPlaylistByName = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.deletePlaylistByName = async (req, res, next) => {
+    try {
+        await playlistService.deletePlaylistByName(req.query.name);
+        const response = new Response(messages.DATA_DELETED_SUCCESSFULLY, null);
+        res.status(200).json(response);
+    } catch (error) {
+        if (!error.statusCode) error.statusCode = 500;
+        next(error);
+    }
+};

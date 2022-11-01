@@ -17,7 +17,7 @@ exports.createPlaylist = async (playlist) => {
     name = name.trim();
 
     // find if name already exists throw error if yes
-    const existingPlaylist = await Playlist.findOne({name: {$regex: name, $options: 'i'}}).exec();
+    const existingPlaylist = await Playlist.findOne({name: {$regex: '^' + name + '$', $options: 'i'}}).exec();
 
     if (existingPlaylist) {
         const error = new Error(messages.PLAYLIST_NAME_ALREADY_EXISTS);
@@ -80,7 +80,7 @@ exports.updatePlaylistByName = async (playlist) => {
     name = name.trim();
 
     // find if name does not exist and throw error if yes
-    const existingPlaylist = await Playlist.findOne({name: {$regex: name, $options: 'i'}}).exec();
+    const existingPlaylist = await Playlist.findOne({name: {$regex: '^' + name + '$', $options: 'i'}}).exec();
 
     if (!existingPlaylist) {
         const error = new Error(messages.PLAYLIST_NAME_DOES_NOT_EXIST);
@@ -198,4 +198,28 @@ exports.getPlaylistByName = async (name) => {
 
     return new PlaylistDto(playlist._id, playlist.name, tracksDto);
 
+};
+
+exports.deletePlaylistByName = async (name) => {
+
+    if (!name) {
+        const error = new Error(messages.ONE_OR_MORE_REQUIRED_REQUEST_PARAMETERS_ARE_MISSING_OR_INVALID);
+        error.statusCode = 400;
+        throw error;
+    }
+
+    name = name.trim();
+
+    const condition = {name: {$regex: '^' + name + '$', $options: 'i'}};
+
+    // find if name does not exist and throw error if yes
+    const existingPlaylist = await Playlist.findOne(condition).exec();
+
+    if (!existingPlaylist) {
+        const error = new Error(messages.PLAYLIST_NAME_DOES_NOT_EXIST);
+        error.statusCode = 400;
+        throw error;
+    }
+
+    await Playlist.deleteOne(condition).exec();
 };
