@@ -10,7 +10,32 @@
 </head>
 <body>
 <!-- Place your content here -->
-<p>Hello World</p>
+<div id="tracks">
+    <div id="searchTracks">
+        <label for="inputSearchTracks">Search Tracks</label>
+        <input id="inputSearchTracks" placeholder="Enter name or artist or album " type="text">
+        <button id="btnSearchTracks" type="button">Search</button>
+        <button id="btnResetSearchTracks" type="button">Reset</button>
+    </div>
+    <div id="divTracksTable">
+        <table>
+            <thead>
+                <tr>
+                    <th>S/N</th>
+                    <th>Name</th>
+                    <th>Artist</th>
+                    <th>Duration</th>
+                    <th>Album</th>
+                    <th>Date Created</th>
+                </tr>
+            </thead>
+            <tbody id="tBodySearchTracks">
+            </tbody>
+        </table>
+        <p id="noRecordFoundTracks" hidden>No record found</p>
+        <p id="defaultTextSearchTracks">Enter search value above to display results</p>
+    </div>
+</div>
 <!-- Embedded JavaScript go here -->
 <script src="script.js"></script>
 </body>
