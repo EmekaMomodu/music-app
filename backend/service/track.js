@@ -28,7 +28,7 @@ exports.getTrackById = async (trackId) => {
     );
 };
 
-exports.searchTracksByTitleOrAlbum = async (searchText, maxNoOfRecords) => {
+exports.searchTracksByTitleOrAlbumOrArtist = async (searchText, maxNoOfRecords) => {
 
     if (!searchText || !maxNoOfRecords || !/^\+?([1-9]\d*)$/.test(maxNoOfRecords)) {
         const error = new Error(messages.ONE_OR_MORE_REQUIRED_REQUEST_PARAMETERS_ARE_MISSING_OR_INVALID);
@@ -39,7 +39,8 @@ exports.searchTracksByTitleOrAlbum = async (searchText, maxNoOfRecords) => {
     const tracks = await Track.find({
         $or: [
             {album_title: {$regex: '.*' + searchText + '.*', $options: 'i'}},
-            {track_title: {$regex: '.*' + searchText + '.*', $options: 'i'}}
+            {track_title: {$regex: '.*' + searchText + '.*', $options: 'i'}},
+            {artist_name: {$regex: '.*' + searchText + '.*', $options: 'i'}}
         ]
     }).limit(maxNoOfRecords).exec();
 
