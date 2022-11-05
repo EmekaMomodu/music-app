@@ -2,6 +2,7 @@
 
 const baseUrl = 'http://localhost:3001';
 const tracksApiUrl = '/api/tracks';
+const playlistsApiUrl = '/api/playlists';
 
 const maxNoOfRecords = 10;
 
@@ -17,6 +18,8 @@ const tBodySearchTracks = document.getElementById('tBodySearchTracks');
 const defaultTextSearchTracks = document.getElementById('defaultTextSearchTracks');
 const btnResetSearchTracks = document.getElementById('btnResetSearchTracks');
 const noRecordFoundTracks = document.getElementById('noRecordFoundTracks');
+const noDataAvailablePlaylist = document.getElementById('noDataAvailablePlaylist');
+const tBodyPlaylists = document.getElementById('tBodyPlaylists');
 
 const messages = {
     NO_VALUE_ENTERED: 'No value entered'
@@ -84,6 +87,51 @@ const searchTracks = () => {
         });
 }
 
+const fetchAllPlaylists = () => {
+    fetch(baseUrl + playlistsApiUrl)
+        .then((response) => {
+            return response.json();
+        })
+        .then((response) => {
+            const playlists = response.data;
+            tBodyPlaylists.innerHTML = '';
+            if(!playlists || !playlists.length) return;
+            noDataAvailablePlaylist.hidden = true;
+            for(const index in playlists){
+                const tdSerialNo = document.createElement('td');
+                const serialNo = String(Number(index) + 1);
+                const textNodeSerialNo = document.createTextNode(serialNo);
+                tdSerialNo.appendChild(textNodeSerialNo);
+
+                const tdName = document.createElement('td');
+                const textNodeName = document.createTextNode(nullDisplayHandler(playlists[index].name));
+                tdName.appendChild(textNodeName);
+
+                const tdNoOfTracks = document.createElement('td');
+                const textNodeNoOfTracks = document.createTextNode(nullDisplayHandler(playlists[index].numberOfTracks));
+                tdNoOfTracks.appendChild(textNodeNoOfTracks);
+
+                const tdTotalPlaytime = document.createElement('td');
+                const textNodeTotalPlaytime = document.createTextNode(nullDisplayHandler(playlists[index].totalPlayTime));
+                tdTotalPlaytime.appendChild(textNodeTotalPlaytime);
+
+                const tdAction = document.createElement('td');
+                const textNodeAction = document.createTextNode('---');
+                tdAction.appendChild(textNodeAction);
+
+                const tr = document.createElement('tr');
+                tr.append(tdSerialNo, tdName, tdNoOfTracks, tdTotalPlaytime, tdAction);
+
+                tBodyPlaylists.append(tr);
+            }
+
+        })
+        .catch((error) => {
+            alert('Error ! : ' + error);
+            console.log("error ::: " + error);
+        });
+}
+
 const resetSearchTracks = () => {
     inputSearchTracks.value = '';
     tBodySearchTracks.innerHTML = '';
@@ -98,3 +146,4 @@ const nullDisplayHandler = (value) => {
 
 btnSearchTracks.addEventListener('click', searchTracks);
 btnResetSearchTracks.addEventListener('click', resetSearchTracks);
+fetchAllPlaylists();

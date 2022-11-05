@@ -11,6 +11,7 @@
 <body>
 <!-- Place your content here -->
 <div id="tracks">
+    <h3>Tracks</h3>
     <div id="searchTracks">
         <label for="inputSearchTracks">Search Tracks</label>
         <input id="inputSearchTracks" placeholder="Enter name or artist or album " type="text">
@@ -34,6 +35,25 @@
         </table>
         <p id="noRecordFoundTracks" hidden>No record found</p>
         <p id="defaultTextSearchTracks">Enter search value above to display results</p>
+    </div>
+</div>
+<div id="playlists">
+    <h3>Playlists</h3>
+    <div id="divPlaylistsTable">
+        <table>
+            <thead>
+                <tr>
+                    <th>S/N</th>
+                    <th>Name</th>
+                    <th>No. of Tracks</th>
+                    <th>Total Playtime</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="tBodyPlaylists">
+            </tbody>
+        </table>
+        <p id="noDataAvailablePlaylist">No Playlist Yet, Create One !</p>
     </div>
 </div>
 <!-- Embedded JavaScript go here -->
