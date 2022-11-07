@@ -194,6 +194,8 @@ exports.getAllPlaylistInfo = async () => {
 
     const playlists = await Playlist.find().exec();
 
+    console.log("playlists ::: " + playlists);
+
     if (!playlists || !playlists.length) {
         const error = new Error(messages.NO_DATA_FOUND);
         error.statusCode = 404;
@@ -203,8 +205,8 @@ exports.getAllPlaylistInfo = async () => {
     // traverse playlist
     // create object with name, tracks length, traverse tracks and calculate total play time
     const result = [];
-    let item = {};
     for(let playlist of playlists){
+        const item = {};
         item.id = playlist._id;
         item.name = playlist.name;
         item.numberOfTracks = playlist.tracks.length;
