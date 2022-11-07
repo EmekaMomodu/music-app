@@ -5,50 +5,53 @@
     <title>ECE 9065 Lab 3</title>
     <meta content="ECE 9065 Lab 3" name="description">
     <meta content="Chukwuemeka Momodu" name="author">
-    <link href="style.css" rel="stylesheet">
-    <link href="favicon.png" rel="icon" type="image/png">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="img/favicon.png" rel="icon" type="image/png">
 </head>
 <body>
 <!-- Place your content here -->
 <div id="tracks">
-    <h3>Tracks</h3>
+    <h3>TRACKS</h3>
     <div id="searchTracks">
         <label for="inputSearchTracks">Search Tracks</label>
         <input id="inputSearchTracks" placeholder="Enter name or artist or album " type="text">
-        <button id="btnSearchTracks" type="button">Search</button>
-        <button id="btnResetSearchTracks" type="button">Reset</button>
+        <button class="blue" id="btnSearchTracks" onclick="displaySearchedTracks()" type="button">Search</button>
+        <button class="black" id="btnResetSearchTracks" onclick="resetSearchTracks()" type="button">Reset</button>
     </div>
     <div id="divTracksTable">
         <table>
             <thead>
-                <tr>
-                    <th>S/N</th>
-                    <th>Name</th>
-                    <th>Artist</th>
-                    <th>Duration</th>
-                    <th>Album</th>
-                    <th>Date Created</th>
-                </tr>
+            <tr>
+                <th>S/N</th>
+                <th>Name</th>
+                <th>Artist</th>
+                <th>Duration</th>
+                <th>Album</th>
+                <th>Date Created</th>
+            </tr>
             </thead>
             <tbody id="tBodySearchTracks">
             </tbody>
         </table>
-        <p id="noRecordFoundTracks" hidden>No record found</p>
+        <p hidden id="noRecordFoundTracks">No record found</p>
         <p id="defaultTextSearchTracks">Enter search value above to display results</p>
     </div>
 </div>
 <div id="playlists">
-    <h3>Playlists</h3>
+    <h3>PLAYLISTS</h3>
+    <div id="divCreatePlaylist">
+        <button class="open-modal blue" data-target="modal-1" id="btnCreatePlaylist">Create Playlist</button>
+    </div>
     <div id="divPlaylistsTable">
         <table>
             <thead>
-                <tr>
-                    <th>S/N</th>
-                    <th>Name</th>
-                    <th>No. of Tracks</th>
-                    <th>Total Playtime</th>
-                    <th>Action</th>
-                </tr>
+            <tr>
+                <th>S/N</th>
+                <th>Name</th>
+                <th>No. of Tracks</th>
+                <th>Total Playtime</th>
+                <th>Action</th>
+            </tr>
             </thead>
             <tbody id="tBodyPlaylists">
             </tbody>
@@ -56,7 +59,28 @@
         <p id="noDataAvailablePlaylist">No Playlist Yet, Create One !</p>
     </div>
 </div>
+<div class="modal-window" id="modal-1">
+    <form autocomplete="off">
+        <div>
+            <label for="playlistName">Playlist Name: </label>
+            <input class="input" id="playlistName" placeholder="Enter playlist name" type="text">
+        </div>
+
+        <div class="autocomplete">
+            <label for="inputSearchTracksForPlaylist">Search tracks to add</label>
+            <input class="input" id="inputSearchTracksForPlaylist" name="myCountry" oninput="suggestTrack()"
+                   placeholder="Enter name or artist or album " type="text">
+        </div>
+        <uL id="ulSearchTracksForPlaylist">
+        </uL>
+    </form>
+    <div>
+        <button class="success" onclick="createPlaylist()">Save</button>
+        <button class="modal-btn modal-hide danger">Close</button>
+    </div>
+</div>
+<div class="modal-fader"></div>
 <!-- Embedded JavaScript go here -->
-<script src="script.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
