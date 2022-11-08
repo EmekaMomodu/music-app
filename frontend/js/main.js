@@ -9,6 +9,8 @@ const noDataAvailablePlaylist = document.getElementById('noDataAvailablePlaylist
 const tBodyPlaylists = document.getElementById('tBodyPlaylists');
 const inputSearchTracksForPlaylist = document.getElementById('inputSearchTracksForPlaylist');
 const playlistName = document.getElementById('playlistName');
+const playlistNameView = document.getElementById('playlistNameView');
+const tbodyViewTracksForPlaylist = document.getElementById('tbodyViewTracksForPlaylist');
 
 // messages
 const messages = {
@@ -113,21 +115,28 @@ async function displayAllPlaylists() {
             const viewButton = document.createElement('button');
             viewButton.textContent = 'View';
             viewButton.classList.add('blue');
+            viewButton.classList.add('open-modal');
+            viewButton.setAttribute('data-id', playlists[index].id);
+            viewButton.setAttribute('data-target', 'view-playlist-modal');
+            viewButton.addEventListener('click', (event) => {
+                viewPlaylist(event);
+            });
 
             const editButton = document.createElement('button');
             editButton.textContent = 'Edit';
             editButton.classList.add('saffron');
+            editButton.setAttribute('data-id', playlists[index].id);
 
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
             deleteButton.classList.add('danger');
+            deleteButton.setAttribute('data-id', playlists[index].id);
+            deleteButton.setAttribute('data-name', playlists[index].name);
 
             const tdAction = document.createElement('td');
             tdAction.append(viewButton, editButton, deleteButton);
 
             const tr = document.createElement('tr');
-
-
 
             tr.append(tdSerialNo, tdName, tdNoOfTracks, tdTotalPlaytime, tdAction);
 
@@ -139,12 +148,64 @@ async function displayAllPlaylists() {
     }
 }
 
+async function viewPlaylist(event) {
+    const id = event.target.getAttribute('data-id');
+    console.log("id ::: " + id);
+    try {
+        // get playlist by id
+        const response = await apiGetPlaylistById(id);
+        console.log('response::: ' + JSON.stringify(response));
+        const {message, data} = response;
+        if (!data) {
+            alert("ERROR ! : " + message);
+            return;
+        }
+        playlistNameView.value = data.name;
+        const tracks = data.tracks;
+        tbodyViewTracksForPlaylist.innerHTML = '';
+        for (const index in tracks) {
+            const tdSerialNo = document.createElement('td');
+            const serialNo = String(Number(index) + 1);
+            const textNodeSerialNo = document.createTextNode(serialNo);
+            tdSerialNo.appendChild(textNodeSerialNo);
+
+            const tdTitle = document.createElement('td');
+            const textNodeTitle = document.createTextNode(nullDisplayHandler(tracks[index].title));
+            tdTitle.appendChild(textNodeTitle);
+
+            const tdArtist = document.createElement('td');
+            const textNodeArtist = document.createTextNode(nullDisplayHandler(tracks[index].artistName));
+            tdArtist.appendChild(textNodeArtist);
+
+            const tdPlaytime = document.createElement('td');
+            const textNodePlaytime = document.createTextNode(nullDisplayHandler(tracks[index].duration));
+            tdPlaytime.appendChild(textNodePlaytime);
+
+            const tdAlbum= document.createElement('td');
+            const textNodeAlbum = document.createTextNode(nullDisplayHandler(tracks[index].albumTitle));
+            tdAlbum.appendChild(textNodeAlbum);
+
+            const tr = document.createElement('tr');
+
+            tr.append(tdSerialNo, tdTitle, tdArtist, tdPlaytime, tdAlbum);
+
+            tbodyViewTracksForPlaylist.append(tr);
+        }
+
+
+    } catch (error) {
+        console.log("error ::: " + error);
+        alert('Error ! : ' + error);
+    }
+
+}
+
 async function suggestTrack() {
     const searchText = inputSearchTracksForPlaylist.value.trim();
-    if(!searchText) return;
+    if (!searchText) return;
     const response = await apiSearchTracks(searchText);
     const tracks = response.data;
-    if(!tracks || !tracks.length) return;
+    if (!tracks || !tracks.length) return;
     autocomplete(inputSearchTracksForPlaylist, tracks);
 }
 
@@ -155,7 +216,7 @@ async function createPlaylist() {
         alert(messages.ONE_OR_MORE_REQUIRED_PARAM_IS_INVALID);
         return;
     }
-    if (!globalListOfTrackIds || !globalListOfTrackIds.length){
+    if (!globalListOfTrackIds || !globalListOfTrackIds.length) {
         alert(messages.ONE_OR_MORE_REQUIRED_PARAM_IS_INVALID);
         return;
     }
@@ -174,7 +235,8 @@ async function createPlaylist() {
         }
         alert("SUCCESS !" + messages.DATA_CREATED_SUCCESSFULLY);
         hideAllModalWindows();
-        await displayAllPlaylists();
+        // await displayAllPlaylists();
+        await init();
 
     } catch (error) {
         console.log("error ::: " + error);
@@ -196,6 +258,10 @@ async function apiGetAllPlaylistInfo() {
 
 async function apiCreatePlaylist(data) {
     return await httpPost(baseUrl + playlistsApiUrl, data);
+}
+
+async function apiGetPlaylistById(id) {
+    return await httpGet(baseUrl + playlistsApiUrl + '/' + id);
 }
 
 async function httpGet(url) {
@@ -288,36 +354,36 @@ function autocomplete(inp, arr) {
         for (i = 0; i < arr.length; i++) {
             /*check if the item starts with the same letters as the text field value:*/
             // if (arr[i].substring(0, val.length).toUpperCase() === val.toUpperCase()) {
-                /*create a DIV element for each matching element:*/
-                b = document.createElement("DIV");
-                /*make the matching letters bold:*/
-                // b.innerHTML = "<strong>" + arr[i].substring(0, val.length) + "</strong>";
-                // b.innerHTML += arr[i].substring(val.length);
-                b.innerHTML = arr[i].title + ' - ' + '<em>' + arr[i].artistName + '</em>';
-                /*insert a input field that will hold the current array item's value:*/
-                b.innerHTML += "<input type='hidden' value='" + arr[i].title + "'>";
-                b.innerHTML += "<input type='hidden' value='" + arr[i].artistName + "'>";
-                b.innerHTML += "<input type='hidden' value='" + arr[i].id + "'>";
-                /*execute a function when someone clicks on the item value (DIV element):*/
-                b.addEventListener("click", function (e) {
-                    /*insert the value for the autocomplete text field:*/
-                    inp.value = '';
-                    const title = this.getElementsByTagName("input")[0].value;
-                    const artistName = this.getElementsByTagName("input")[1].value;
-                    const id = Number(this.getElementsByTagName("input")[2].value);
-                    const liTrack = document.createElement('li');
-                    if(globalListOfTrackIds.indexOf(id) === -1){
-                        const textNodeTrack = document.createTextNode(title + ' - ' + artistName);
-                        liTrack.appendChild(textNodeTrack);
-                        ulSearchTracksForPlaylist.append(liTrack);
-                        globalListOfTrackIds.push(id);
-                    }
-                    console.log("globalListOfTrackIds ::: " + globalListOfTrackIds);
-                    /*close the list of autocompleted values,
-                    (or any other open lists of autocompleted values:*/
-                    closeAllLists();
-                });
-                a.appendChild(b);
+            /*create a DIV element for each matching element:*/
+            b = document.createElement("DIV");
+            /*make the matching letters bold:*/
+            // b.innerHTML = "<strong>" + arr[i].substring(0, val.length) + "</strong>";
+            // b.innerHTML += arr[i].substring(val.length);
+            b.innerHTML = arr[i].title + ' - ' + '<em>' + arr[i].artistName + '</em>';
+            /*insert a input field that will hold the current array item's value:*/
+            b.innerHTML += "<input type='hidden' value='" + arr[i].title + "'>";
+            b.innerHTML += "<input type='hidden' value='" + arr[i].artistName + "'>";
+            b.innerHTML += "<input type='hidden' value='" + arr[i].id + "'>";
+            /*execute a function when someone clicks on the item value (DIV element):*/
+            b.addEventListener("click", function (e) {
+                /*insert the value for the autocomplete text field:*/
+                inp.value = '';
+                const title = this.getElementsByTagName("input")[0].value;
+                const artistName = this.getElementsByTagName("input")[1].value;
+                const id = Number(this.getElementsByTagName("input")[2].value);
+                const liTrack = document.createElement('li');
+                if (globalListOfTrackIds.indexOf(id) === -1) {
+                    const textNodeTrack = document.createTextNode(title + ' - ' + artistName);
+                    liTrack.appendChild(textNodeTrack);
+                    ulSearchTracksForPlaylist.append(liTrack);
+                    globalListOfTrackIds.push(id);
+                }
+                console.log("globalListOfTrackIds ::: " + globalListOfTrackIds);
+                /*close the list of autocompleted values,
+                (or any other open lists of autocompleted values:*/
+                closeAllLists();
+            });
+            a.appendChild(b);
             // }
         }
     });

@@ -18,13 +18,13 @@
     display: none;
     position: absolute;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     z-index: 99999;
     background: #fff;
     padding: 20px;
     border-radius: 5px;
     font-family: sans-serif;
-    top: 50px;
+    top: 50%;
 }
 
 .modal-window.active {
@@ -41,7 +41,7 @@
 }
 
 button {
-    cursor:pointer;
+    cursor: pointer;
     border: none;
     color: #fff;
     padding: 10px 15px;
@@ -50,19 +50,27 @@ button {
     text-decoration: none;
 }
 
-.success{
+.success {
     background-color: #4CAF50; /* Green */
 }
 
-.blue {background-color: #008CBA;} /* Blue */
+.blue {
+    background-color: #008CBA;
+}
 
-.saffron {background-color: #F4C430;}
+/* Blue */
 
-.danger{
+.saffron {
+    background-color: #F4C430;
+}
+
+.danger {
     background-color: #f44336;
 }
 
-.black {background-color: #555555;}
+.black {
+    background-color: #555555;
+}
 
 .modal-btn {
     background: #36a5a5;

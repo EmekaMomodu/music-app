@@ -14,7 +14,7 @@
 <h2 class="center">MUSIC APP :)</h2>
 <hr>
 <div id="tracks">
-    <h3 >TRACKS</h3>
+    <h3>TRACKS</h3>
     <div id="searchTracks">
         <label for="inputSearchTracks"><b>Search Tracks</b></label>
         <input class="input" id="inputSearchTracks" placeholder="Enter name or artist or album " type="text">
@@ -37,7 +37,7 @@
             <tbody id="tBodySearchTracks">
             </tbody>
         </table>
-        <h3 hidden id="noRecordFoundTracks" class="center">No record found</h3>
+        <h3 class="center" hidden id="noRecordFoundTracks">No record found</h3>
         <h3 class="center" id="defaultTextSearchTracks">Enter search value above to display results</h3>
     </div>
 </div>
@@ -45,7 +45,8 @@
 <div id="playlists">
     <h3>PLAYLISTS</h3>
     <div id="divCreatePlaylist">
-        <button class="open-modal blue" data-target="modal-1" id="btnCreatePlaylist">Create Playlist</button>
+        <button class="open-modal blue" data-target="create-playlist-modal" id="btnCreatePlaylist">Create Playlist
+        </button>
     </div>
     <br>
     <div id="divPlaylistsTable">
@@ -66,7 +67,7 @@
     </div>
 </div>
 <hr>
-<div class="modal-window" id="modal-1">
+<div class="modal-window" id="create-playlist-modal">
     <form autocomplete="off">
         <div>
             <label for="playlistName">Playlist Name: </label>
@@ -83,6 +84,32 @@
     </form>
     <div>
         <button class="success" onclick="createPlaylist()">Save</button>
+        <button class="modal-btn modal-hide danger">Close</button>
+    </div>
+</div>
+<div class="modal-window" id="view-playlist-modal">
+    <div>
+        <label for="playlistNameView"><b>Playlist Name:</b></label>
+        <input class="input" disabled id="playlistNameView" placeholder="Enter playlist name" type="text">
+    </div>
+    <br>
+    <h4>Tracks:</h4>
+    <br>
+    <table>
+        <thead>
+        <tr>
+            <th>S/N</th>
+            <th>Title</th>
+            <th>Artist</th>
+            <th>Playtime</th>
+            <th>Album</th>
+        </tr>
+        </thead>
+        <tbody id="tbodyViewTracksForPlaylist">
+        </tbody>
+    </table>
+    <br>
+    <div>
         <button class="modal-btn modal-hide danger">Close</button>
     </div>
 </div>

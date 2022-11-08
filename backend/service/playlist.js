@@ -135,7 +135,7 @@ exports.updatePlaylistByName = async (playlist) => {
 
 exports.getPlaylistById = async (id) => {
 
-    if(!ObjectId.isValid(id)){
+    if (!ObjectId.isValid(id)) {
         const error = new Error(messages.INVALID_ID);
         error.statusCode = 400;
         throw error;
@@ -172,7 +172,7 @@ exports.getPlaylistById = async (id) => {
 
 exports.deletePlaylistById = async (id) => {
 
-    if(!ObjectId.isValid(id)){
+    if (!ObjectId.isValid(id)) {
         const error = new Error(messages.INVALID_ID);
         error.statusCode = 400;
         throw error;
@@ -187,7 +187,7 @@ exports.deletePlaylistById = async (id) => {
         throw error;
     }
 
-    await Playlist.deleteOne({_id : id}).exec();
+    await Playlist.deleteOne({_id: id}).exec();
 };
 
 exports.getAllPlaylistInfo = async () => {
@@ -205,7 +205,7 @@ exports.getAllPlaylistInfo = async () => {
     // traverse playlist
     // create object with name, tracks length, traverse tracks and calculate total play time
     const result = [];
-    for(let playlist of playlists){
+    for (let playlist of playlists) {
         const item = {};
         item.id = playlist._id;
         item.name = playlist.name;
@@ -213,8 +213,8 @@ exports.getAllPlaylistInfo = async () => {
         let totalPlayTime = 0;
         let trackDurationList;
         let trackDuration;
-        for(let track of playlist.tracks){
-            if(!track.track_duration) continue;
+        for (let track of playlist.tracks) {
+            if (!track.track_duration) continue;
             trackDurationList = track.track_duration.split(':');
             trackDuration = (Number(trackDurationList[0]) * 60) + Number(trackDurationList[1]);
             totalPlayTime += trackDuration
@@ -222,7 +222,7 @@ exports.getAllPlaylistInfo = async () => {
         let totalMinutes = Math.floor(totalPlayTime / 60);
         let totalSeconds = totalPlayTime - (totalMinutes * 60);
 
-        item.totalPlayTime = stringPadLeft(totalMinutes,'0',2) + ':' + stringPadLeft(totalSeconds,'0',2);
+        item.totalPlayTime = stringPadLeft(totalMinutes, '0', 2) + ':' + stringPadLeft(totalSeconds, '0', 2);
 
         result.push(item);
     }
@@ -232,5 +232,5 @@ exports.getAllPlaylistInfo = async () => {
 };
 
 const stringPadLeft = (string, pad, length) => {
-    return (new Array(length+1).join(pad)+string).slice(-length);
+    return (new Array(length + 1).join(pad) + string).slice(-length);
 }
