@@ -56,6 +56,8 @@ button {
 
 .blue {background-color: #008CBA;} /* Blue */
 
+.saffron {background-color: #F4C430;}
+
 .danger{
     background-color: #f44336;
 }
@@ -84,11 +86,15 @@ button {
 }
 
 .input {
-    border: 1px solid transparent;
+    border: 1px solid;
     background-color: #f1f1f1;
     padding: 10px;
     font-size: 16px;
     /*width: 100%;*/
+}
+
+.width-100 {
+    width: 100%;
 }
 
 .autocomplete-items {
@@ -124,7 +130,7 @@ button {
 table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
-    /*width: 100%;*/
+    width: 100%;
 }
 
 td, th {
@@ -136,3 +142,20 @@ td, th {
 tr:nth-child(even) {
     background-color: #dddddd;
 }
+
+.center {
+    text-align: center;
+}
+
+body {
+    /*background: #F0F8FF;*/
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    margin: 20px;
+}
+
+.form-control {
+    margin-bottom: 10px;
+    padding-bottom: 20px;
+    position: relative;
+}
+

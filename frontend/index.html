@@ -10,14 +10,18 @@
 </head>
 <body>
 <!-- Place your content here -->
+<hr>
+<h2 class="center">MUSIC APP :)</h2>
+<hr>
 <div id="tracks">
-    <h3>TRACKS</h3>
+    <h3 >TRACKS</h3>
     <div id="searchTracks">
-        <label for="inputSearchTracks">Search Tracks</label>
-        <input id="inputSearchTracks" placeholder="Enter name or artist or album " type="text">
+        <label for="inputSearchTracks"><b>Search Tracks</b></label>
+        <input class="input" id="inputSearchTracks" placeholder="Enter name or artist or album " type="text">
         <button class="blue" id="btnSearchTracks" onclick="displaySearchedTracks()" type="button">Search</button>
         <button class="black" id="btnResetSearchTracks" onclick="resetSearchTracks()" type="button">Reset</button>
     </div>
+    <br>
     <div id="divTracksTable">
         <table>
             <thead>
@@ -33,15 +37,17 @@
             <tbody id="tBodySearchTracks">
             </tbody>
         </table>
-        <p hidden id="noRecordFoundTracks">No record found</p>
-        <p id="defaultTextSearchTracks">Enter search value above to display results</p>
+        <h3 hidden id="noRecordFoundTracks" class="center">No record found</h3>
+        <h3 class="center" id="defaultTextSearchTracks">Enter search value above to display results</h3>
     </div>
 </div>
+<hr>
 <div id="playlists">
     <h3>PLAYLISTS</h3>
     <div id="divCreatePlaylist">
         <button class="open-modal blue" data-target="modal-1" id="btnCreatePlaylist">Create Playlist</button>
     </div>
+    <br>
     <div id="divPlaylistsTable">
         <table>
             <thead>
@@ -56,19 +62,20 @@
             <tbody id="tBodyPlaylists">
             </tbody>
         </table>
-        <p id="noDataAvailablePlaylist">No Playlist Yet, Create One !</p>
+        <h3 class="center" id="noDataAvailablePlaylist">No Playlist Yet, Create One !</h3>
     </div>
 </div>
+<hr>
 <div class="modal-window" id="modal-1">
     <form autocomplete="off">
         <div>
             <label for="playlistName">Playlist Name: </label>
             <input class="input" id="playlistName" placeholder="Enter playlist name" type="text">
         </div>
-
+        <br>
         <div class="autocomplete">
-            <label for="inputSearchTracksForPlaylist">Search tracks to add</label>
-            <input class="input" id="inputSearchTracksForPlaylist" name="myCountry" oninput="suggestTrack()"
+            <label for="inputSearchTracksForPlaylist">Search tracks to ADD to playlist</label>
+            <input class="input width-100" id="inputSearchTracksForPlaylist" name="myCountry" oninput="suggestTrack()"
                    placeholder="Enter name or artist or album " type="text">
         </div>
         <uL id="ulSearchTracksForPlaylist">

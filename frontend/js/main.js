@@ -110,11 +110,25 @@ async function displayAllPlaylists() {
             const textNodeTotalPlaytime = document.createTextNode(nullDisplayHandler(playlists[index].totalPlayTime));
             tdTotalPlaytime.appendChild(textNodeTotalPlaytime);
 
+            const viewButton = document.createElement('button');
+            viewButton.textContent = 'View';
+            viewButton.classList.add('blue');
+
+            const editButton = document.createElement('button');
+            editButton.textContent = 'Edit';
+            editButton.classList.add('saffron');
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.classList.add('danger');
+
             const tdAction = document.createElement('td');
-            const textNodeAction = document.createTextNode('---');
-            tdAction.appendChild(textNodeAction);
+            tdAction.append(viewButton, editButton, deleteButton);
 
             const tr = document.createElement('tr');
+
+
+
             tr.append(tdSerialNo, tdName, tdNoOfTracks, tdTotalPlaytime, tdAction);
 
             tBodyPlaylists.append(tr);
