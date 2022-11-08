@@ -38,7 +38,7 @@ exports.getPlaylistById = async (req, res, next) => {
 exports.deletePlaylistById = async (req, res, next) => {
     try {
         await playlistService.deletePlaylistById(req.params.id);
-        const response = new Response(messages.DATA_DELETED_SUCCESSFULLY, null);
+        const response = new Response(messages.DATA_DELETED_SUCCESSFULLY, req.params.id);
         res.status(200).json(response);
     } catch (error) {
         if (!error.statusCode) error.statusCode = 500;

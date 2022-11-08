@@ -15,13 +15,15 @@ const inputSearchTracksForPlaylistEdit = document.getElementById('inputSearchTra
 const tbodyCreateTracksForPlaylist = document.getElementById('tbodyCreateTracksForPlaylist');
 const playlistNameEdit = document.getElementById('playlistNameEdit');
 const tbodyEditTracksForPlaylist = document.getElementById('tbodyEditTracksForPlaylist');
+const deleteMessageP = document.getElementById('deleteMessageP');
 
 // messages
 const messages = {
     NO_VALUE_ENTERED: 'No value entered',
     ONE_OR_MORE_REQUIRED_PARAM_IS_INVALID: 'One or more required parameter is INVALID',
     DATA_CREATED_SUCCESSFULLY: 'Data created successfully',
-    DATA_UPDATED_SUCCESSFULLY: 'Data updated successfully'
+    DATA_UPDATED_SUCCESSFULLY: 'Data updated successfully',
+    DATA_DELETED_SUCCESSFULLY: 'Data deleted successfully',
 };
 
 // api urls
@@ -37,7 +39,7 @@ const httpHeaders = {
 const maxNoOfRecords = 10;
 
 let globalListOfTrackIds = [];
-
+let playlistIdToDelete;
 // functions
 async function displaySearchedTracks() {
     const searchText = inputSearchTracks.value.trim();
@@ -97,7 +99,9 @@ async function displayAllPlaylists() {
         const response = await apiGetAllPlaylistInfo();
         const playlists = response.data;
         tBodyPlaylists.innerHTML = '';
-        if (!playlists || !playlists.length) return;
+        if (!playlists || !playlists.length) {
+            noDataAvailablePlaylist.hidden = false;
+            return;}
         noDataAvailablePlaylist.hidden = true;
         for (const index in playlists) {
             const tdSerialNo = document.createElement('td');
@@ -140,8 +144,13 @@ async function displayAllPlaylists() {
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
             deleteButton.classList.add('danger');
+            deleteButton.classList.add('open-modal');
             deleteButton.setAttribute('data-id', playlists[index].id);
             deleteButton.setAttribute('data-name', playlists[index].name);
+            deleteButton.setAttribute('data-target', 'delete-playlist-modal');
+            deleteButton.addEventListener('click', (event) => {
+                viewDeletePlaylist(event);
+            });
 
             const tdAction = document.createElement('td');
             tdAction.append(viewButton, editButton, deleteButton);
@@ -267,7 +276,12 @@ async function viewEditPlaylist(event) {
         console.log("error ::: " + error);
         alert('Error ! : ' + error);
     }
+}
 
+async function viewDeletePlaylist (event) {
+    const playlistName = event.target.getAttribute('data-name');
+    deleteMessageP.textContent = 'Are you sure you want to delete: ' + playlistName;
+    playlistIdToDelete = event.target.getAttribute('data-id');
 }
 
 async function suggestTrack(event) {
@@ -346,6 +360,24 @@ async function updatePlaylist () {
     }
 }
 
+async function deletePlaylist () {
+    try {
+        const response = await apiDeletePlaylist(playlistIdToDelete);
+        console.log("response ::: " + JSON.stringify(response));
+        const {message, data} = response;
+        if (!data) {
+            alert("ERROR ! : " + message);
+            return;
+        }
+        alert("SUCCESS !" + messages.DATA_DELETED_SUCCESSFULLY);
+        hideAllModalWindows();
+        await init();
+    } catch (error) {
+        console.log("error ::: " + error);
+        alert('Error ! : ' + error);
+    }
+}
+
 async function apiSearchTracks(searchText) {
     const queryParams = new URLSearchParams({
         searchText: searchText,
@@ -368,6 +400,10 @@ async function apiGetPlaylistById(id) {
 
 async function apiUpdatePlaylist(data) {
     return await httpPut(baseUrl + playlistsApiUrl, data);
+}
+
+async function apiDeletePlaylist(id) {
+    return await httpDelete(baseUrl + playlistsApiUrl + '/' + id);
 }
 
 async function httpGet(url) {
