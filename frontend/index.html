@@ -68,26 +68,44 @@
 </div>
 <hr>
 <div class="modal-window" id="create-playlist-modal">
+    <h3 class="center">Create New Playlist</h3>
+    <hr>
+    <div>
+        <label for="playlistName">Playlist Name: </label>
+        <input class="input" id="playlistName" placeholder="Enter playlist name" type="text">
+    </div>
+    <br>
     <form autocomplete="off">
-        <div>
-            <label for="playlistName">Playlist Name: </label>
-            <input class="input" id="playlistName" placeholder="Enter playlist name" type="text">
-        </div>
-        <br>
         <div class="autocomplete">
             <label for="inputSearchTracksForPlaylist">Search tracks to ADD to playlist</label>
-            <input class="input width-100" id="inputSearchTracksForPlaylist" name="myCountry" oninput="suggestTrack()"
+            <input class="input width-100" id="inputSearchTracksForPlaylist" data-table = "tbodyCreateTracksForPlaylist"
                    placeholder="Enter name or artist or album " type="text">
         </div>
-        <uL id="ulSearchTracksForPlaylist">
-        </uL>
     </form>
-    <div>
-        <button class="success" onclick="createPlaylist()">Save</button>
+    <uL id="ulSearchTracksForPlaylist">
+    </uL>
+    <table>
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Artist</th>
+            <th>Playtime</th>
+            <th>Album</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody id="tbodyCreateTracksForPlaylist">
+        </tbody>
+    </table>
+    <hr>
+    <div class="align-right">
         <button class="modal-btn modal-hide danger">Close</button>
+        <button class="success" onclick="createPlaylist()">Save</button>
     </div>
 </div>
 <div class="modal-window" id="view-playlist-modal">
+    <h3 class="center">View Playlist</h3>
+    <hr>
     <div>
         <label for="playlistNameView"><b>Playlist Name:</b></label>
         <input class="input" disabled id="playlistNameView" placeholder="Enter playlist name" type="text">
@@ -108,9 +126,47 @@
         <tbody id="tbodyViewTracksForPlaylist">
         </tbody>
     </table>
-    <br>
-    <div>
+    <hr>
+    <div class="align-right">
         <button class="modal-btn modal-hide danger">Close</button>
+    </div>
+</div>
+<div class="modal-window" id="edit-playlist-modal">
+    <h3 class="center">Edit Playlist</h3>
+    <hr>
+    <div>
+        <label for="playlistNameEdit">Playlist Name:</label>
+        <input class="input" disabled id="playlistNameEdit" placeholder="Enter playlist name" type="text">
+    </div>
+    <br>
+    <form autocomplete="off">
+        <div class="autocomplete">
+            <label for="inputSearchTracksForPlaylistEdit">Search tracks to ADD to playlist</label>
+            <input class="input width-100" id="inputSearchTracksForPlaylistEdit" data-table = "tbodyEditTracksForPlaylist"
+                   placeholder="Enter name or artist or album " type="text">
+        </div>
+    </form>
+    <br>
+    <h4>Tracks:</h4>
+    <br>
+    <table>
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Artist</th>
+            <th>Playtime</th>
+            <th>Album</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody id="tbodyEditTracksForPlaylist">
+        </tbody>
+    </table>
+    <hr>
+    <div class="align-right">
+        <button class="modal-btn modal-hide danger">Close</button>
+        <button class="success" onclick="updatePlaylist()">Save</button>
+
     </div>
 </div>
 <div class="modal-fader"></div>

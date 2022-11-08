@@ -11,12 +11,17 @@ const inputSearchTracksForPlaylist = document.getElementById('inputSearchTracksF
 const playlistName = document.getElementById('playlistName');
 const playlistNameView = document.getElementById('playlistNameView');
 const tbodyViewTracksForPlaylist = document.getElementById('tbodyViewTracksForPlaylist');
+const inputSearchTracksForPlaylistEdit = document.getElementById('inputSearchTracksForPlaylistEdit');
+const tbodyCreateTracksForPlaylist = document.getElementById('tbodyCreateTracksForPlaylist');
+const playlistNameEdit = document.getElementById('playlistNameEdit');
+const tbodyEditTracksForPlaylist = document.getElementById('tbodyEditTracksForPlaylist');
 
 // messages
 const messages = {
     NO_VALUE_ENTERED: 'No value entered',
     ONE_OR_MORE_REQUIRED_PARAM_IS_INVALID: 'One or more required parameter is INVALID',
     DATA_CREATED_SUCCESSFULLY: 'Data created successfully',
+    DATA_UPDATED_SUCCESSFULLY: 'Data updated successfully'
 };
 
 // api urls
@@ -31,7 +36,7 @@ const httpHeaders = {
 
 const maxNoOfRecords = 10;
 
-const globalListOfTrackIds = [];
+let globalListOfTrackIds = [];
 
 // functions
 async function displaySearchedTracks() {
@@ -125,7 +130,12 @@ async function displayAllPlaylists() {
             const editButton = document.createElement('button');
             editButton.textContent = 'Edit';
             editButton.classList.add('saffron');
+            editButton.classList.add('open-modal');
             editButton.setAttribute('data-id', playlists[index].id);
+            editButton.setAttribute('data-target', 'edit-playlist-modal');
+            editButton.addEventListener('click', (event) => {
+                viewEditPlaylist(event);
+            });
 
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
@@ -200,13 +210,73 @@ async function viewPlaylist(event) {
 
 }
 
-async function suggestTrack() {
-    const searchText = inputSearchTracksForPlaylist.value.trim();
+async function viewEditPlaylist(event) {
+    const id = event.target.getAttribute('data-id');
+    console.log("id ::: " + id);
+    try {
+        // get playlist by id
+        const response = await apiGetPlaylistById(id);
+        console.log('response::: ' + JSON.stringify(response));
+        const {message, data} = response;
+        if (!data) {
+            alert("ERROR ! : " + message);
+            return;
+        }
+        playlistNameEdit.value = data.name;
+        const tracks = data.tracks;
+        tbodyEditTracksForPlaylist.innerHTML = '';
+        globalListOfTrackIds = [];
+        for (const index in tracks) {
+            const tdTitle = document.createElement('td');
+            const textNodeTitle = document.createTextNode(nullDisplayHandler(tracks[index].title));
+            tdTitle.appendChild(textNodeTitle);
+
+            const tdArtist = document.createElement('td');
+            const textNodeArtist = document.createTextNode(nullDisplayHandler(tracks[index].artistName));
+            tdArtist.appendChild(textNodeArtist);
+
+            const tdPlaytime = document.createElement('td');
+            const textNodePlaytime = document.createTextNode(nullDisplayHandler(tracks[index].duration));
+            tdPlaytime.appendChild(textNodePlaytime);
+
+            const tdAlbum= document.createElement('td');
+            const textNodeAlbum = document.createTextNode(nullDisplayHandler(tracks[index].albumTitle));
+            tdAlbum.appendChild(textNodeAlbum);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Remove';
+            deleteButton.classList.add('danger');
+            deleteButton.setAttribute('data-id', tracks[index].id);
+            deleteButton.addEventListener('click', (event) => {
+                const dataId =  event.target.getAttribute('data-id');
+                document.getElementById(dataId).remove();
+                globalListOfTrackIds.splice(globalListOfTrackIds.indexOf(dataId), 1);
+            });
+
+            const tdAction = document.createElement('td');
+            tdAction.appendChild(deleteButton);
+
+            const tr = document.createElement('tr');
+            tr.append(tdTitle, tdArtist, tdPlaytime, tdAlbum, tdAction);
+            tr.id = tracks[index].id;
+
+            tbodyEditTracksForPlaylist.append(tr);
+            globalListOfTrackIds.push(tracks[index].id);
+        }
+    } catch (error) {
+        console.log("error ::: " + error);
+        alert('Error ! : ' + error);
+    }
+
+}
+
+async function suggestTrack(event) {
+    const searchText = event.target.value.trim();
     if (!searchText) return;
     const response = await apiSearchTracks(searchText);
     const tracks = response.data;
     if (!tracks || !tracks.length) return;
-    autocomplete(inputSearchTracksForPlaylist, tracks);
+    autocomplete(event.target, tracks);
 }
 
 // createPlaylist
@@ -244,6 +314,38 @@ async function createPlaylist() {
     }
 }
 
+async function updatePlaylist () {
+    const name = playlistNameEdit.value.trim();
+    if (!name) {
+        alert(messages.ONE_OR_MORE_REQUIRED_PARAM_IS_INVALID);
+        return;
+    }
+    if (!globalListOfTrackIds || !globalListOfTrackIds.length) {
+        alert(messages.ONE_OR_MORE_REQUIRED_PARAM_IS_INVALID);
+        return;
+    }
+    const playlist = {
+        name: name,
+        trackIds: globalListOfTrackIds
+    };
+    console.log("playlist :: " + JSON.stringify(playlist));
+    try {
+        const response = await apiUpdatePlaylist(playlist);
+        console.log("response ::: " + JSON.stringify(response));
+        const {message, data} = response;
+        if (!data) {
+            alert("ERROR ! : " + message);
+            return;
+        }
+        alert("SUCCESS !" + messages.DATA_UPDATED_SUCCESSFULLY);
+        hideAllModalWindows();
+        await init();
+    } catch (error) {
+        console.log("error ::: " + error);
+        alert('Error ! : ' + error);
+    }
+}
+
 async function apiSearchTracks(searchText) {
     const queryParams = new URLSearchParams({
         searchText: searchText,
@@ -262,6 +364,10 @@ async function apiCreatePlaylist(data) {
 
 async function apiGetPlaylistById(id) {
     return await httpGet(baseUrl + playlistsApiUrl + '/' + id);
+}
+
+async function apiUpdatePlaylist(data) {
+    return await httpPut(baseUrl + playlistsApiUrl, data);
 }
 
 async function httpGet(url) {
@@ -307,10 +413,20 @@ function nullDisplayHandler(value) {
 }
 
 function showModalWindow(buttonEl) {
-    const modalTarget = "#" + buttonEl.getAttribute("data-target");
+    const modalTargetId = "#" + buttonEl.getAttribute("data-target");
+
+    // patch code :(
+    const modalTarget = document.querySelector(modalTargetId);
+
+    if(modalTarget.id === 'create-playlist-modal') {
+        playlistName.value = '';
+        tbodyCreateTracksForPlaylist.innerHTML = '';
+        globalListOfTrackIds = [];
+    }
 
     document.querySelector(".modal-fader").className += " active";
-    document.querySelector(modalTarget).className += " active";
+    modalTarget.className += " active";
+
 }
 
 function hideAllModalWindows() {
@@ -329,11 +445,13 @@ function hideAllModalWindows() {
 }
 
 function autocomplete(inp, arr) {
+    const tbodyId = inp.getAttribute('data-table');
+    const tbody = document.querySelector('#' + tbodyId);
     /*the autocomplete function takes two arguments,
     the text field element and an array of possible autocompleted values:*/
     let currentFocus;
     /*execute a function when someone writes in the text field:*/
-    inp.addEventListener("input", function (e) {
+    inp.addEventListener("input", function (event) {
         let a, b, i, val = this.value;
         /*close any already open lists of autocompleted values*/
         closeAllLists();
@@ -348,9 +466,6 @@ function autocomplete(inp, arr) {
         /*append the DIV element as a child of the autocomplete container:*/
         this.parentNode.appendChild(a);
         /*for each item in the array...*/
-
-        const ulSearchTracksForPlaylist = document.getElementById('ulSearchTracksForPlaylist');
-
         for (i = 0; i < arr.length; i++) {
             /*check if the item starts with the same letters as the text field value:*/
             // if (arr[i].substring(0, val.length).toUpperCase() === val.toUpperCase()) {
@@ -364,6 +479,8 @@ function autocomplete(inp, arr) {
             b.innerHTML += "<input type='hidden' value='" + arr[i].title + "'>";
             b.innerHTML += "<input type='hidden' value='" + arr[i].artistName + "'>";
             b.innerHTML += "<input type='hidden' value='" + arr[i].id + "'>";
+            b.innerHTML += "<input type='hidden' value='" + arr[i].duration + "'>";
+            b.innerHTML += "<input type='hidden' value='" + arr[i].albumTitle + "'>";
             /*execute a function when someone clicks on the item value (DIV element):*/
             b.addEventListener("click", function (e) {
                 /*insert the value for the autocomplete text field:*/
@@ -371,11 +488,46 @@ function autocomplete(inp, arr) {
                 const title = this.getElementsByTagName("input")[0].value;
                 const artistName = this.getElementsByTagName("input")[1].value;
                 const id = Number(this.getElementsByTagName("input")[2].value);
-                const liTrack = document.createElement('li');
+                const playtime = this.getElementsByTagName("input")[3].value;
+                const album = this.getElementsByTagName("input")[4].value;
                 if (globalListOfTrackIds.indexOf(id) === -1) {
-                    const textNodeTrack = document.createTextNode(title + ' - ' + artistName);
-                    liTrack.appendChild(textNodeTrack);
-                    ulSearchTracksForPlaylist.append(liTrack);
+
+                    const tdTitle = document.createElement('td');
+                    const textNodeTitle = document.createTextNode(nullDisplayHandler(title));
+                    tdTitle.appendChild(textNodeTitle);
+
+                    const tdArtist = document.createElement('td');
+                    const textNodeArtist = document.createTextNode(nullDisplayHandler(artistName));
+                    tdArtist.appendChild(textNodeArtist);
+
+                    const tdPlaytime = document.createElement('td');
+                    const textNodePlaytime = document.createTextNode(nullDisplayHandler(playtime));
+                    tdPlaytime.appendChild(textNodePlaytime);
+
+                    const tdAlbum= document.createElement('td');
+                    const textNodeAlbum = document.createTextNode(nullDisplayHandler(album));
+                    tdAlbum.appendChild(textNodeAlbum);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Remove';
+                    deleteButton.classList.add('danger');
+                    deleteButton.setAttribute('data-id', ""+id);
+                    deleteButton.addEventListener('click', (event) => {
+                        console.log("remove !!!");
+                        const dataId =  event.target.getAttribute('data-id');
+                        document.getElementById(dataId).remove();
+                        globalListOfTrackIds.splice(globalListOfTrackIds.indexOf(dataId), 1);
+                    });
+
+                    const tdAction = document.createElement('td');
+                    tdAction.appendChild(deleteButton);
+
+                    const tr = document.createElement('tr');
+                    tr.append(tdTitle, tdArtist, tdPlaytime, tdAlbum, tdAction);
+                    tr.id = ""+id;
+
+                    tbody.append(tr);
+
                     globalListOfTrackIds.push(id);
                 }
                 console.log("globalListOfTrackIds ::: " + globalListOfTrackIds);
@@ -471,6 +623,14 @@ async function init() {
 }
 
 // function calls
+
+inputSearchTracksForPlaylist.addEventListener('input', async (event) => {
+    await suggestTrack(event);
+});
+inputSearchTracksForPlaylistEdit.addEventListener('input', async (event) => {
+    await suggestTrack(event);
+});
+
 init().catch((error) => {
     console.log(error)
 });
