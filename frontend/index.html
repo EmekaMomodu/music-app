@@ -27,11 +27,11 @@
             <thead>
             <tr>
                 <th>S/N</th>
-                <th>Name</th>
-                <th>Artist</th>
-                <th>Duration</th>
-                <th>Album</th>
-                <th>Date Created</th>
+                <th data-sort-track="title" >Name</th>
+                <th data-sort-track="artistName" >Artist</th>
+                <th data-sort-track="duration" >Duration</th>
+                <th data-sort-track="albumTitle" >Album</th>
+                <th data-sort-track="dateCreated" >Date Created</th>
             </tr>
             </thead>
             <tbody id="tBodySearchTracks">
@@ -82,8 +82,9 @@
                    placeholder="Enter name or artist or album " type="text">
         </div>
     </form>
-    <uL id="ulSearchTracksForPlaylist">
-    </uL>
+    <br>
+    <h4>Tracks:</h4>
+    <br>
     <table>
         <thead>
         <tr>

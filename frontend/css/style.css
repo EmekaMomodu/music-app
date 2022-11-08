@@ -171,3 +171,7 @@ body {
     text-align: right;
 }
 
+[data-sort-track] {
+    cursor: pointer;
+}
+

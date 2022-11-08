@@ -40,6 +40,11 @@ const maxNoOfRecords = 10;
 
 let globalListOfTrackIds = [];
 let playlistIdToDelete;
+let searchedTracksData = [];
+let sortTracksAsc = false;
+
+let sortTracksColumn;
+
 // functions
 async function displaySearchedTracks() {
     const searchText = inputSearchTracks.value.trim();
@@ -49,48 +54,54 @@ async function displaySearchedTracks() {
     }
     try {
         const response = await apiSearchTracks(searchText);
-        const tracks = response.data;
+        searchedTracksData = response.data;
         tBodySearchTracks.innerHTML = '';
         defaultTextSearchTracks.hidden = true;
-        if (!tracks || !tracks.length) {
+        if (!searchedTracksData || !searchedTracksData.length) {
             noRecordFoundTracks.hidden = false;
             return;
         }
         noRecordFoundTracks.hidden = true;
-        for (const index in tracks) {
-            const tdSerialNo = document.createElement('td');
-            const serialNo = String(Number(index) + 1);
-            const textNodeSerialNo = document.createTextNode(serialNo);
-            tdSerialNo.appendChild(textNodeSerialNo);
+        renderSearchedTracksTable();
 
-            const tdName = document.createElement('td');
-            const textNodeName = document.createTextNode(nullDisplayHandler(tracks[index].title));
-            tdName.appendChild(textNodeName);
-
-            const tdArtist = document.createElement('td');
-            const textNodeArtist = document.createTextNode(nullDisplayHandler(tracks[index].artistName));
-            tdArtist.appendChild(textNodeArtist);
-
-            const tdDuration = document.createElement('td');
-            const textNodeDuration = document.createTextNode(nullDisplayHandler(tracks[index].duration));
-            tdDuration.appendChild(textNodeDuration);
-
-            const tdAlbum = document.createElement('td');
-            const textNodeAlbum = document.createTextNode(nullDisplayHandler(tracks[index].albumTitle));
-            tdAlbum.appendChild(textNodeAlbum);
-
-            const tdDateCreated = document.createElement('td');
-            const textNodeDateCreated = document.createTextNode(nullDisplayHandler(tracks[index].dateCreated).split('T')[0]);
-            tdDateCreated.appendChild(textNodeDateCreated);
-
-            const tr = document.createElement('tr');
-            tr.append(tdSerialNo, tdName, tdArtist, tdDuration, tdAlbum, tdDateCreated);
-
-            tBodySearchTracks.append(tr);
-        }
     } catch (error) {
         console.log("error ::: " + error);
         alert('Error ! : ' + error);
+    }
+}
+
+function renderSearchedTracksTable () {
+    tBodySearchTracks.innerHTML = '';
+    for (const index in searchedTracksData) {
+        const tdSerialNo = document.createElement('td');
+        const serialNo = String(Number(index) + 1);
+        const textNodeSerialNo = document.createTextNode(serialNo);
+        tdSerialNo.appendChild(textNodeSerialNo);
+
+        const tdName = document.createElement('td');
+        const textNodeName = document.createTextNode(nullDisplayHandler(searchedTracksData[index].title));
+        tdName.appendChild(textNodeName);
+
+        const tdArtist = document.createElement('td');
+        const textNodeArtist = document.createTextNode(nullDisplayHandler(searchedTracksData[index].artistName));
+        tdArtist.appendChild(textNodeArtist);
+
+        const tdDuration = document.createElement('td');
+        const textNodeDuration = document.createTextNode(nullDisplayHandler(searchedTracksData[index].duration));
+        tdDuration.appendChild(textNodeDuration);
+
+        const tdAlbum = document.createElement('td');
+        const textNodeAlbum = document.createTextNode(nullDisplayHandler(searchedTracksData[index].albumTitle));
+        tdAlbum.appendChild(textNodeAlbum);
+
+        const tdDateCreated = document.createElement('td');
+        const textNodeDateCreated = document.createTextNode(nullDisplayHandler(searchedTracksData[index].dateCreated).split('T')[0]);
+        tdDateCreated.appendChild(textNodeDateCreated);
+
+        const tr = document.createElement('tr');
+        tr.append(tdSerialNo, tdName, tdArtist, tdDuration, tdAlbum, tdDateCreated);
+
+        tBodySearchTracks.append(tr);
     }
 }
 
@@ -441,6 +452,7 @@ function resetSearchTracks() {
     tBodySearchTracks.innerHTML = '';
     defaultTextSearchTracks.hidden = false;
     noRecordFoundTracks.hidden = true;
+    searchedTracksData = [];
 }
 
 function nullDisplayHandler(value) {
@@ -636,6 +648,18 @@ function autocomplete(inp, arr) {
     });
 }
 
+function sortTracks(e) {
+    let thisSort = e.target.getAttribute('data-sort-track');
+    if(sortTracksColumn === thisSort) sortTracksAsc = !sortTracksAsc;
+    sortTracksColumn = thisSort;
+    searchedTracksData.sort((a, b) => {
+        if(a[sortTracksColumn] < b[sortTracksColumn]) return sortTracksAsc?1:-1;
+        if(a[sortTracksColumn] > b[sortTracksColumn]) return sortTracksAsc?-1:1;
+        return 0;
+    });
+    renderSearchedTracksTable();
+}
+
 async function init() {
     await displayAllPlaylists();
     (function () {
@@ -656,16 +680,20 @@ async function init() {
             hideAllModalWindows();
         });
     })();
+    inputSearchTracksForPlaylist.addEventListener('input', async (event) => {
+        await suggestTrack(event);
+    });
+    inputSearchTracksForPlaylistEdit.addEventListener('input', async (event) => {
+        await suggestTrack(event);
+    });
+    document.querySelectorAll('[data-sort-track]').forEach( (element) => {
+        element.addEventListener('click', sortTracks, false);
+    });
 }
 
 // function calls
 
-inputSearchTracksForPlaylist.addEventListener('input', async (event) => {
-    await suggestTrack(event);
-});
-inputSearchTracksForPlaylistEdit.addEventListener('input', async (event) => {
-    await suggestTrack(event);
-});
+
 
 init().catch((error) => {
     console.log(error)
