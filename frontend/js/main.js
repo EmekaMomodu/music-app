@@ -40,14 +40,18 @@ const maxNoOfRecords = 10;
 
 let globalListOfTrackIds = [];
 let playlistIdToDelete;
-let searchedTracksData = [];
-let sortTracksAsc = false;
-let sortPlaylistsInfoAsc = false;
 
 let sortTracksColumn;
-let sortPlaylistsInfoColumn;
+let sortTracksAsc = false;
+let searchedTracksData = [];
 
+let sortPlaylistsInfoColumn;
+let sortPlaylistsInfoAsc = false;
 let playlistsInfoData = []
+
+let sortViewPlaylistColumn;
+let sortViewPlaylistsAsc = false;
+let viewPlaylistTracksData = [];
 
 // functions
 async function displaySearchedTracks() {
@@ -200,41 +204,44 @@ async function viewPlaylist(event) {
             return;
         }
         playlistNameView.value = data.name;
-        const tracks = data.tracks;
-        tbodyViewTracksForPlaylist.innerHTML = '';
-        for (const index in tracks) {
-            const tdSerialNo = document.createElement('td');
-            const serialNo = String(Number(index) + 1);
-            const textNodeSerialNo = document.createTextNode(serialNo);
-            tdSerialNo.appendChild(textNodeSerialNo);
-
-            const tdTitle = document.createElement('td');
-            const textNodeTitle = document.createTextNode(nullDisplayHandler(tracks[index].title));
-            tdTitle.appendChild(textNodeTitle);
-
-            const tdArtist = document.createElement('td');
-            const textNodeArtist = document.createTextNode(nullDisplayHandler(tracks[index].artistName));
-            tdArtist.appendChild(textNodeArtist);
-
-            const tdPlaytime = document.createElement('td');
-            const textNodePlaytime = document.createTextNode(nullDisplayHandler(tracks[index].duration));
-            tdPlaytime.appendChild(textNodePlaytime);
-
-            const tdAlbum= document.createElement('td');
-            const textNodeAlbum = document.createTextNode(nullDisplayHandler(tracks[index].albumTitle));
-            tdAlbum.appendChild(textNodeAlbum);
-
-            const tr = document.createElement('tr');
-
-            tr.append(tdSerialNo, tdTitle, tdArtist, tdPlaytime, tdAlbum);
-
-            tbodyViewTracksForPlaylist.append(tr);
-        }
+        viewPlaylistTracksData = data.tracks;
+        await renderViewPlaylistTable();
     } catch (error) {
         console.log("error ::: " + error);
         alert('Error ! : ' + error);
     }
+}
 
+async function renderViewPlaylistTable() {
+    tbodyViewTracksForPlaylist.innerHTML = '';
+    for (const index in viewPlaylistTracksData) {
+        const tdSerialNo = document.createElement('td');
+        const serialNo = String(Number(index) + 1);
+        const textNodeSerialNo = document.createTextNode(serialNo);
+        tdSerialNo.appendChild(textNodeSerialNo);
+
+        const tdTitle = document.createElement('td');
+        const textNodeTitle = document.createTextNode(nullDisplayHandler(viewPlaylistTracksData[index].title));
+        tdTitle.appendChild(textNodeTitle);
+
+        const tdArtist = document.createElement('td');
+        const textNodeArtist = document.createTextNode(nullDisplayHandler(viewPlaylistTracksData[index].artistName));
+        tdArtist.appendChild(textNodeArtist);
+
+        const tdPlaytime = document.createElement('td');
+        const textNodePlaytime = document.createTextNode(nullDisplayHandler(viewPlaylistTracksData[index].duration));
+        tdPlaytime.appendChild(textNodePlaytime);
+
+        const tdAlbum= document.createElement('td');
+        const textNodeAlbum = document.createTextNode(nullDisplayHandler(viewPlaylistTracksData[index].albumTitle));
+        tdAlbum.appendChild(textNodeAlbum);
+
+        const tr = document.createElement('tr');
+
+        tr.append(tdSerialNo, tdTitle, tdArtist, tdPlaytime, tdAlbum);
+
+        tbodyViewTracksForPlaylist.append(tr);
+    }
 }
 
 async function viewEditPlaylist(event) {
@@ -681,6 +688,18 @@ async function sortPlaylistsInfo(e) {
     initModal();
 }
 
+async function sortViewPlaylist(e) {
+    let thisSort = e.target.getAttribute('data-sort-view-playlist');
+    if(sortViewPlaylistColumn === thisSort) sortViewPlaylistsAsc = !sortViewPlaylistsAsc;
+    sortViewPlaylistColumn = thisSort;
+    viewPlaylistTracksData.sort((a, b) => {
+        if(a[sortViewPlaylistColumn] < b[sortViewPlaylistColumn]) return sortViewPlaylistsAsc?1:-1;
+        if(a[sortViewPlaylistColumn] > b[sortViewPlaylistColumn]) return sortViewPlaylistsAsc?-1:1;
+        return 0;
+    });
+    await renderViewPlaylistTable();
+}
+
 function initModal () {
     document.querySelectorAll(".open-modal").forEach(function (trigger) {
         trigger.addEventListener("click", function () {
@@ -714,6 +733,9 @@ async function init() {
     });
     document.querySelectorAll('[data-sort-playlist-info]').forEach( (element) => {
         element.addEventListener('click', sortPlaylistsInfo, false);
+    });
+    document.querySelectorAll('[data-sort-view-playlist]').forEach( (element) => {
+        element.addEventListener('click', sortViewPlaylist, false);
     });
 }
 
