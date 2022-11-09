@@ -23,6 +23,10 @@ const tBodySearchArtists = document.getElementById('tBodySearchArtists');
 const defaultTextSearchArtists = document.getElementById('defaultTextSearchArtists');
 const noRecordFoundArtists = document.getElementById('noRecordFoundArtists');
 
+const tBodyFetchGenres = document.getElementById('tBodyFetchGenres');
+const defaultTextFetchGenres = document.getElementById('defaultTextFetchGenres');
+const noRecordFoundGenres = document.getElementById('noRecordFoundGenres');
+
 // messages
 const messages = {
     NO_VALUE_ENTERED: 'No value entered',
@@ -37,6 +41,7 @@ const baseUrl = 'http://localhost:3001';
 const tracksApiUrl = '/api/tracks';
 const playlistsApiUrl = '/api/playlists';
 const artistApiUrl = '/api/artists';
+const genresApiUrl = '/api/genres';
 
 // http options
 const httpHeaders = {
@@ -62,6 +67,8 @@ let viewPlaylistTracksData = [];
 
 let searchedArtistData = [];
 
+let fetchedGenresData = [];
+
 // functions
 async function displaySearchedTracks() {
     inputSearchTracksById.value = '';
@@ -82,6 +89,24 @@ async function displaySearchedTracks() {
         noRecordFoundTracks.hidden = true;
         renderSearchedTracksTable();
 
+    } catch (error) {
+        console.log("error ::: " + error);
+        alert('Error ! : ' + error);
+    }
+}
+
+async function displayFetchedGenres() {
+    try {
+        const response = await apiGetAllGenres();
+        fetchedGenresData = response.data;
+        tBodyFetchGenres.innerHTML = '';
+        defaultTextFetchGenres.hidden = true;
+        if (!fetchedGenresData || !fetchedGenresData.length) {
+            noRecordFoundGenres.hidden = false;
+            return;
+        }
+        noRecordFoundGenres.hidden = true;
+        renderFetchedGenresTable();
     } catch (error) {
         console.log("error ::: " + error);
         alert('Error ! : ' + error);
@@ -229,6 +254,29 @@ function renderSearchedArtistsTable () {
         tr.append(tdSerialNo, tdName, tdLocation, tdContact, tdHandle, tdActiveYearBegin);
 
         tBodySearchArtists.append(tr);
+    }
+}
+
+function renderFetchedGenresTable () {
+    tBodyFetchGenres.innerHTML = '';
+    for (const index in fetchedGenresData) {
+        const tdSerialNo = document.createElement('td');
+        const serialNo = String(Number(index) + 1);
+        const textNodeSerialNo = document.createTextNode(serialNo);
+        tdSerialNo.appendChild(textNodeSerialNo);
+
+        const tdName = document.createElement('td');
+        const textNodeName = document.createTextNode(nullDisplayHandler(fetchedGenresData[index].name));
+        tdName.appendChild(textNodeName);
+
+        const tdParentId = document.createElement('td');
+        const textNodeParentId = document.createTextNode(nullDisplayHandler(fetchedGenresData[index].parentId));
+        tdParentId.appendChild(textNodeParentId);
+
+        const tr = document.createElement('tr');
+        tr.append(tdSerialNo, tdName, tdParentId);
+
+        tBodyFetchGenres.append(tr);
     }
 }
 
@@ -541,6 +589,10 @@ async function apiGetAllPlaylistInfo() {
     return await httpGet(baseUrl + playlistsApiUrl);
 }
 
+async function apiGetAllGenres() {
+    return await httpGet(baseUrl + genresApiUrl);
+}
+
 async function apiCreatePlaylist(data) {
     return await httpPost(baseUrl + playlistsApiUrl, data);
 }
@@ -604,7 +656,6 @@ function resetSearchTracks() {
     inputSearchTracksById.value = '';
 }
 
-
 function resetSearchArtists() {
     inputSearchArtists.value = '';
     tBodySearchArtists.innerHTML = '';
@@ -612,6 +663,13 @@ function resetSearchArtists() {
     noRecordFoundArtists.hidden = true;
     searchedArtistData = [];
     inputSearchArtistsById.value = '';
+}
+
+function resetFetchedGenres() {
+    tBodyFetchGenres.innerHTML = '';
+    defaultTextFetchGenres.hidden = false;
+    noRecordFoundGenres.hidden = true;
+    fetchedGenresData = [];
 }
 
 function nullDisplayHandler(value) {

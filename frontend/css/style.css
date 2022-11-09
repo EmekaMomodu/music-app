@@ -1,3 +1,10 @@
+
+body {
+    /*background: #F0F8FF;*/
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    margin: 100px;
+}
+
 .modal-fader {
     display: none;
     position: fixed;
@@ -153,12 +160,6 @@ tr:nth-child(even) {
 
 .center {
     text-align: center;
-}
-
-body {
-    /*background: #F0F8FF;*/
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    margin: 100px;
 }
 
 .form-control {

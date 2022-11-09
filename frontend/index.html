@@ -104,6 +104,31 @@
     </div>
 </div>
 <hr>
+<div id="Genres">
+    <h3>GENRES</h3>
+    <div id="fetchGenres">
+        <label><b>Fetch Genres: </b></label>
+        <button class="blue" id="btnFetchGenres" onclick="displayFetchedGenres()" type="button">Fetch</button>
+        <button class="black" id="btnResetFetchGenres" onclick="resetFetchedGenres()" type="button">Reset</button>
+    </div>
+    <br>
+    <div id="divGenresTable">
+        <table>
+            <thead>
+            <tr>
+                <th>S/N</th>
+                <th>Name</th>
+                <th>Parent ID</th>
+            </tr>
+            </thead>
+            <tbody id="tBodyFetchGenres">
+            </tbody>
+        </table>
+        <h3 class="center" hidden id="noRecordFoundGenres">No record found</h3>
+        <h3 class="center" id="defaultTextFetchGenres">Click fetch button to display results</h3>
+    </div>
+</div>
+<hr>
 <div class="modal-window" id="create-playlist-modal">
     <h3 class="center">Create New Playlist</h3>
     <hr>
