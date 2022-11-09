@@ -16,6 +16,7 @@ const tbodyCreateTracksForPlaylist = document.getElementById('tbodyCreateTracksF
 const playlistNameEdit = document.getElementById('playlistNameEdit');
 const tbodyEditTracksForPlaylist = document.getElementById('tbodyEditTracksForPlaylist');
 const deleteMessageP = document.getElementById('deleteMessageP');
+const inputSearchTracksById = document.getElementById('inputSearchTracksById');
 
 // messages
 const messages = {
@@ -69,6 +70,30 @@ async function displaySearchedTracks() {
             noRecordFoundTracks.hidden = false;
             return;
         }
+        noRecordFoundTracks.hidden = true;
+        renderSearchedTracksTable();
+
+    } catch (error) {
+        console.log("error ::: " + error);
+        alert('Error ! : ' + error);
+    }
+}
+
+async function displaySearchedTrackById() {
+    const id = inputSearchTracksById.value.trim();
+    if (!id) {
+        alert(messages.NO_VALUE_ENTERED);
+        return;
+    }
+    try {
+        const response = await apiGetTrackById(id);
+        tBodySearchTracks.innerHTML = '';
+        defaultTextSearchTracks.hidden = true;
+        if (!response.data) {
+            noRecordFoundTracks.hidden = false;
+            return;
+        }
+        searchedTracksData = [response.data];
         noRecordFoundTracks.hidden = true;
         renderSearchedTracksTable();
 
@@ -431,6 +456,10 @@ async function apiDeletePlaylist(id) {
     return await httpDelete(baseUrl + playlistsApiUrl + '/' + id);
 }
 
+async function apiGetTrackById(id) {
+    return await httpGet(baseUrl + tracksApiUrl + '/' + id);
+}
+
 async function httpGet(url) {
     const response = await fetch(url);
     return response.json();
@@ -467,6 +496,7 @@ function resetSearchTracks() {
     defaultTextSearchTracks.hidden = false;
     noRecordFoundTracks.hidden = true;
     searchedTracksData = [];
+    inputSearchTracksById.value = '';
 }
 
 function nullDisplayHandler(value) {
