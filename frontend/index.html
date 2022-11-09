@@ -17,10 +17,10 @@
     <h3>TRACKS</h3>
     <div id="searchTracks">
         <label for="inputSearchTracks"><b>Search Tracks: </b></label>
-        <input class="input" id="inputSearchTracks" placeholder="Enter name or artist or album " type="text">
+        <input autocomplete="off" class="input"  id="inputSearchTracks" placeholder="Enter name or artist or album " type="text">
         <button class="blue" id="btnSearchTracks" onclick="displaySearchedTracks()" type="button">Search</button>
 
-        <input class="input" id="inputSearchTracksById" placeholder="Enter track ID" type="text">
+        <input autocomplete="off" class="input" id="inputSearchTracksById" placeholder="Enter track ID" type="text">
         <button class="blue" id="btnSearchTracksById" onclick="displaySearchedTrackById()" type="button">Search</button>
 
         <button class="black" id="btnResetSearchTracks" onclick="resetSearchTracks()" type="button">Reset</button>
@@ -75,10 +75,10 @@
     <h3>ARTISTS</h3>
     <div id="searchArtists">
         <label for="inputSearchArtists"><b>Search Artists: </b></label>
-        <input class="input" id="inputSearchArtists" placeholder="Enter artist name" type="text">
+        <input autocomplete="off" class="input" id="inputSearchArtists" placeholder="Enter artist name" type="text">
         <button class="blue" id="btnSearchArtists" onclick="displaySearchedArtists()" type="button">Search</button>
 
-        <input class="input" id="inputSearchArtistsById" placeholder="Enter artist ID" type="text">
+        <input autocomplete="off" class="input" id="inputSearchArtistsById" placeholder="Enter artist ID" type="text">
         <button class="blue" id="btnSearchArtistById" onclick="displaySearchedArtistById()" type="button">Search</button>
 
         <button class="black" id="btnResetSearchArtists" onclick="resetSearchArtists()" type="button">Reset</button>
@@ -134,13 +134,13 @@
     <hr>
     <div>
         <label for="playlistName">Playlist Name: </label>
-        <input class="input" id="playlistName" placeholder="Enter playlist name" type="text">
+        <input autocomplete="off" class="input" id="playlistName" placeholder="Enter playlist name" type="text">
     </div>
     <br>
     <form autocomplete="off">
         <div class="autocomplete">
             <label for="inputSearchTracksForPlaylist">Search tracks to ADD to playlist</label>
-            <input class="input width-100" id="inputSearchTracksForPlaylist" data-table = "tbodyCreateTracksForPlaylist"
+            <input autocomplete="off" class="input width-100" id="inputSearchTracksForPlaylist" data-table = "tbodyCreateTracksForPlaylist"
                    placeholder="Enter name or artist or album " type="text">
         </div>
     </form>
@@ -171,7 +171,7 @@
     <hr>
     <div>
         <label for="playlistNameView"><b>Playlist Name:</b></label>
-        <input class="input" disabled id="playlistNameView" placeholder="Enter playlist name" type="text">
+        <input autocomplete="off" class="input" disabled id="playlistNameView" placeholder="Enter playlist name" type="text">
     </div>
     <br>
     <h4>Tracks:</h4>
@@ -199,13 +199,13 @@
     <hr>
     <div>
         <label for="playlistNameEdit">Playlist Name:</label>
-        <input class="input" disabled id="playlistNameEdit" placeholder="Enter playlist name" type="text">
+        <input autocomplete="off" class="input" disabled id="playlistNameEdit" placeholder="Enter playlist name" type="text">
     </div>
     <br>
     <form autocomplete="off">
         <div class="autocomplete">
             <label for="inputSearchTracksForPlaylistEdit">Search tracks to ADD to playlist</label>
-            <input class="input width-100" id="inputSearchTracksForPlaylistEdit" data-table = "tbodyEditTracksForPlaylist"
+            <input autocomplete="off" class="input width-100" id="inputSearchTracksForPlaylistEdit" data-table = "tbodyEditTracksForPlaylist"
                    placeholder="Enter name or artist or album " type="text">
         </div>
     </form>
