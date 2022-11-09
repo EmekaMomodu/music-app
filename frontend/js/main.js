@@ -99,6 +99,7 @@ async function displaySearchedArtists() {
         const response = await apiSearchArtists(searchText);
         searchedArtistData = response.data;
         defaultTextSearchArtists.hidden = true;
+        tBodySearchArtists.innerHTML = '';
         if (!searchedArtistData || !searchedArtistData.length) {
             noRecordFoundArtists.hidden = false;
             return;
@@ -130,6 +131,31 @@ async function displaySearchedTrackById() {
         noRecordFoundTracks.hidden = true;
         renderSearchedTracksTable();
 
+    } catch (error) {
+        console.log("error ::: " + error);
+        alert('Error ! : ' + error);
+    }
+}
+
+
+async function displaySearchedArtistById() {
+    inputSearchArtists.value = '';
+    const id = inputSearchArtistsById.value.trim();
+    if (!id) {
+        alert(messages.NO_VALUE_ENTERED);
+        return;
+    }
+    try {
+        const response = await apiGetArtistById(id);
+        tBodySearchArtists.innerHTML = '';
+        defaultTextSearchArtists.hidden = true;
+        if (!response.data) {
+            noRecordFoundArtists.hidden = false;
+            return;
+        }
+        searchedArtistData = [response.data];
+        noRecordFoundArtists.hidden = true;
+        renderSearchedArtistsTable();
     } catch (error) {
         console.log("error ::: " + error);
         alert('Error ! : ' + error);
@@ -576,6 +602,16 @@ function resetSearchTracks() {
     noRecordFoundTracks.hidden = true;
     searchedTracksData = [];
     inputSearchTracksById.value = '';
+}
+
+
+function resetSearchArtists() {
+    inputSearchArtists.value = '';
+    tBodySearchArtists.innerHTML = '';
+    defaultTextSearchArtists.hidden = false;
+    noRecordFoundArtists.hidden = true;
+    searchedArtistData = [];
+    inputSearchArtistsById.value = '';
 }
 
 function nullDisplayHandler(value) {
