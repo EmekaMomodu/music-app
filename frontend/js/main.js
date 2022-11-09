@@ -42,8 +42,12 @@ let globalListOfTrackIds = [];
 let playlistIdToDelete;
 let searchedTracksData = [];
 let sortTracksAsc = false;
+let sortPlaylistsInfoAsc = false;
 
 let sortTracksColumn;
+let sortPlaylistsInfoColumn;
+
+let playlistsInfoData = []
 
 // functions
 async function displaySearchedTracks() {
@@ -108,73 +112,78 @@ function renderSearchedTracksTable () {
 async function displayAllPlaylists() {
     try {
         const response = await apiGetAllPlaylistInfo();
-        const playlists = response.data;
+        playlistsInfoData = response.data;
         tBodyPlaylists.innerHTML = '';
-        if (!playlists || !playlists.length) {
+        if (!playlistsInfoData || !playlistsInfoData.length) {
             noDataAvailablePlaylist.hidden = false;
             return;}
         noDataAvailablePlaylist.hidden = true;
-        for (const index in playlists) {
-            const tdSerialNo = document.createElement('td');
-            const serialNo = String(Number(index) + 1);
-            const textNodeSerialNo = document.createTextNode(serialNo);
-            tdSerialNo.appendChild(textNodeSerialNo);
-
-            const tdName = document.createElement('td');
-            const textNodeName = document.createTextNode(nullDisplayHandler(playlists[index].name));
-            tdName.appendChild(textNodeName);
-
-            const tdNoOfTracks = document.createElement('td');
-            const textNodeNoOfTracks = document.createTextNode(nullDisplayHandler(playlists[index].numberOfTracks));
-            tdNoOfTracks.appendChild(textNodeNoOfTracks);
-
-            const tdTotalPlaytime = document.createElement('td');
-            const textNodeTotalPlaytime = document.createTextNode(nullDisplayHandler(playlists[index].totalPlayTime));
-            tdTotalPlaytime.appendChild(textNodeTotalPlaytime);
-
-            const viewButton = document.createElement('button');
-            viewButton.textContent = 'View';
-            viewButton.classList.add('blue');
-            viewButton.classList.add('open-modal');
-            viewButton.setAttribute('data-id', playlists[index].id);
-            viewButton.setAttribute('data-target', 'view-playlist-modal');
-            viewButton.addEventListener('click', (event) => {
-                viewPlaylist(event);
-            });
-
-            const editButton = document.createElement('button');
-            editButton.textContent = 'Edit';
-            editButton.classList.add('saffron');
-            editButton.classList.add('open-modal');
-            editButton.setAttribute('data-id', playlists[index].id);
-            editButton.setAttribute('data-target', 'edit-playlist-modal');
-            editButton.addEventListener('click', (event) => {
-                viewEditPlaylist(event);
-            });
-
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Delete';
-            deleteButton.classList.add('danger');
-            deleteButton.classList.add('open-modal');
-            deleteButton.setAttribute('data-id', playlists[index].id);
-            deleteButton.setAttribute('data-name', playlists[index].name);
-            deleteButton.setAttribute('data-target', 'delete-playlist-modal');
-            deleteButton.addEventListener('click', (event) => {
-                viewDeletePlaylist(event);
-            });
-
-            const tdAction = document.createElement('td');
-            tdAction.append(viewButton, editButton, deleteButton);
-
-            const tr = document.createElement('tr');
-
-            tr.append(tdSerialNo, tdName, tdNoOfTracks, tdTotalPlaytime, tdAction);
-
-            tBodyPlaylists.append(tr);
-        }
+        await renderPlaylistsInfoTable();
     } catch (error) {
         console.log("error ::: " + error);
         alert('Error ! : ' + error);
+    }
+}
+
+async function renderPlaylistsInfoTable() {
+    tBodyPlaylists.innerHTML = '';
+    for (const index in playlistsInfoData) {
+        const tdSerialNo = document.createElement('td');
+        const serialNo = String(Number(index) + 1);
+        const textNodeSerialNo = document.createTextNode(serialNo);
+        tdSerialNo.appendChild(textNodeSerialNo);
+
+        const tdName = document.createElement('td');
+        const textNodeName = document.createTextNode(nullDisplayHandler(playlistsInfoData[index].name));
+        tdName.appendChild(textNodeName);
+
+        const tdNoOfTracks = document.createElement('td');
+        const textNodeNoOfTracks = document.createTextNode(nullDisplayHandler(playlistsInfoData[index].numberOfTracks));
+        tdNoOfTracks.appendChild(textNodeNoOfTracks);
+
+        const tdTotalPlaytime = document.createElement('td');
+        const textNodeTotalPlaytime = document.createTextNode(nullDisplayHandler(playlistsInfoData[index].totalPlayTime));
+        tdTotalPlaytime.appendChild(textNodeTotalPlaytime);
+
+        const viewButton = document.createElement('button');
+        viewButton.textContent = 'View';
+        viewButton.classList.add('blue');
+        viewButton.classList.add('open-modal');
+        viewButton.setAttribute('data-id', playlistsInfoData[index].id);
+        viewButton.setAttribute('data-target', 'view-playlist-modal');
+        viewButton.addEventListener('click', (event) => {
+            viewPlaylist(event);
+        });
+
+        const editButton = document.createElement('button');
+        editButton.textContent = 'Edit';
+        editButton.classList.add('saffron');
+        editButton.classList.add('open-modal');
+        editButton.setAttribute('data-id', playlistsInfoData[index].id);
+        editButton.setAttribute('data-target', 'edit-playlist-modal');
+        editButton.addEventListener('click', (event) => {
+            viewEditPlaylist(event);
+        });
+
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.classList.add('danger');
+        deleteButton.classList.add('open-modal');
+        deleteButton.setAttribute('data-id', playlistsInfoData[index].id);
+        deleteButton.setAttribute('data-name', playlistsInfoData[index].name);
+        deleteButton.setAttribute('data-target', 'delete-playlist-modal');
+        deleteButton.addEventListener('click', (event) => {
+            viewDeletePlaylist(event);
+        });
+
+        const tdAction = document.createElement('td');
+        tdAction.append(viewButton, editButton, deleteButton);
+
+        const tr = document.createElement('tr');
+
+        tr.append(tdSerialNo, tdName, tdNoOfTracks, tdTotalPlaytime, tdAction);
+
+        tBodyPlaylists.append(tr);
     }
 }
 
@@ -221,8 +230,6 @@ async function viewPlaylist(event) {
 
             tbodyViewTracksForPlaylist.append(tr);
         }
-
-
     } catch (error) {
         console.log("error ::: " + error);
         alert('Error ! : ' + error);
@@ -660,26 +667,42 @@ function sortTracks(e) {
     renderSearchedTracksTable();
 }
 
-async function init() {
-    await displayAllPlaylists();
-    (function () {
-        document.querySelectorAll(".open-modal").forEach(function (trigger) {
-            trigger.addEventListener("click", function () {
-                hideAllModalWindows();
-                showModalWindow(this);
-            });
-        });
+// sortPlaylistsInfo
+async function sortPlaylistsInfo(e) {
+    let thisSort = e.target.getAttribute('data-sort-playlist-info');
+    if(sortPlaylistsInfoColumn === thisSort) sortPlaylistsInfoAsc = !sortPlaylistsInfoAsc;
+    sortPlaylistsInfoColumn = thisSort;
+    playlistsInfoData.sort((a, b) => {
+        if(a[sortPlaylistsInfoColumn] < b[sortPlaylistsInfoColumn]) return sortPlaylistsInfoAsc?1:-1;
+        if(a[sortPlaylistsInfoColumn] > b[sortPlaylistsInfoColumn]) return sortPlaylistsInfoAsc?-1:1;
+        return 0;
+    });
+    await renderPlaylistsInfoTable();
+    initModal();
+}
 
-        document.querySelectorAll(".modal-hide").forEach(function (closeBtn) {
-            closeBtn.addEventListener("click", function () {
-                hideAllModalWindows();
-            });
+function initModal () {
+    document.querySelectorAll(".open-modal").forEach(function (trigger) {
+        trigger.addEventListener("click", function () {
+            hideAllModalWindows();
+            showModalWindow(this);
         });
+    });
 
-        document.querySelector(".modal-fader").addEventListener("click", function () {
+    document.querySelectorAll(".modal-hide").forEach(function (closeBtn) {
+        closeBtn.addEventListener("click", function () {
             hideAllModalWindows();
         });
-    })();
+    });
+
+    document.querySelector(".modal-fader").addEventListener("click", function () {
+        hideAllModalWindows();
+    });
+}
+
+async function init() {
+    await displayAllPlaylists();
+    initModal();
     inputSearchTracksForPlaylist.addEventListener('input', async (event) => {
         await suggestTrack(event);
     });
@@ -688,6 +711,9 @@ async function init() {
     });
     document.querySelectorAll('[data-sort-track]').forEach( (element) => {
         element.addEventListener('click', sortTracks, false);
+    });
+    document.querySelectorAll('[data-sort-playlist-info]').forEach( (element) => {
+        element.addEventListener('click', sortPlaylistsInfo, false);
     });
 }
 
