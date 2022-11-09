@@ -16,11 +16,11 @@
 <div id="tracks">
     <h3>TRACKS</h3>
     <div id="searchTracks">
-        <label for="inputSearchTracks"><b>Search Tracks</b></label>
+        <label for="inputSearchTracks"><b>Search Tracks: </b></label>
         <input class="input" id="inputSearchTracks" placeholder="Enter name or artist or album " type="text">
         <button class="blue" id="btnSearchTracks" onclick="displaySearchedTracks()" type="button">Search</button>
 
-        <input class="input" id="inputSearchTracksById" placeholder="Enter Track Id" type="text">
+        <input class="input" id="inputSearchTracksById" placeholder="Enter track ID" type="text">
         <button class="blue" id="btnSearchTracksById" onclick="displaySearchedTrackById()" type="button">Search</button>
 
         <button class="black" id="btnResetSearchTracks" onclick="resetSearchTracks()" type="button">Reset</button>
@@ -68,6 +68,39 @@
             </tbody>
         </table>
         <h3 class="center" id="noDataAvailablePlaylist">No Playlist Yet, Create One !</h3>
+    </div>
+</div>
+<hr>
+<div id="artists">
+    <h3>ARTISTS</h3>
+    <div id="searchArtists">
+        <label for="inputSearchArtists"><b>Search Artists: </b></label>
+        <input class="input" id="inputSearchArtists" placeholder="Enter artist name" type="text">
+        <button class="blue" id="btnSearchArtists" onclick="displaySearchedArtists()" type="button">Search</button>
+
+        <input class="input" id="inputSearchArtistsById" placeholder="Enter artist ID" type="text">
+        <button class="blue" id="btnSearchArtistById" onclick="displaySearchedArtistById()" type="button">Search</button>
+
+        <button class="black" id="btnResetSearchArtists" onclick="resetSearchArtists()" type="button">Reset</button>
+    </div>
+    <br>
+    <div id="divArtistsTable">
+        <table>
+            <thead>
+            <tr>
+                <th>S/N</th>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Contact</th>
+                <th>Handle</th>
+                <th>Active Year Begin</th>
+            </tr>
+            </thead>
+            <tbody id="tBodySearchArtists">
+            </tbody>
+        </table>
+        <h3 class="center" hidden id="noRecordFoundArtists">No record found</h3>
+        <h3 class="center" id="defaultTextSearchArtists">Enter search value above to display results</h3>
     </div>
 </div>
 <hr>

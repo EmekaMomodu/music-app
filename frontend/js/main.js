@@ -17,6 +17,11 @@ const playlistNameEdit = document.getElementById('playlistNameEdit');
 const tbodyEditTracksForPlaylist = document.getElementById('tbodyEditTracksForPlaylist');
 const deleteMessageP = document.getElementById('deleteMessageP');
 const inputSearchTracksById = document.getElementById('inputSearchTracksById');
+const inputSearchArtists = document.getElementById('inputSearchArtists');
+const inputSearchArtistsById = document.getElementById('inputSearchArtistsById');
+const tBodySearchArtists = document.getElementById('tBodySearchArtists');
+const defaultTextSearchArtists = document.getElementById('defaultTextSearchArtists');
+const noRecordFoundArtists = document.getElementById('noRecordFoundArtists');
 
 // messages
 const messages = {
@@ -31,13 +36,14 @@ const messages = {
 const baseUrl = 'http://localhost:3001';
 const tracksApiUrl = '/api/tracks';
 const playlistsApiUrl = '/api/playlists';
+const artistApiUrl = '/api/artists';
 
 // http options
 const httpHeaders = {
     'Content-Type': 'application/json'
 };
 
-const maxNoOfRecords = 10;
+const maxNoOfRecords = 20;
 
 let globalListOfTrackIds = [];
 let playlistIdToDelete;
@@ -54,8 +60,11 @@ let sortViewPlaylistColumn;
 let sortViewPlaylistsAsc = false;
 let viewPlaylistTracksData = [];
 
+let searchedArtistData = [];
+
 // functions
 async function displaySearchedTracks() {
+    inputSearchTracksById.value = '';
     const searchText = inputSearchTracks.value.trim();
     if (!searchText) {
         alert(messages.NO_VALUE_ENTERED);
@@ -79,7 +88,31 @@ async function displaySearchedTracks() {
     }
 }
 
+async function displaySearchedArtists() {
+    inputSearchArtistsById.value = '';
+    const searchText = inputSearchArtists.value.trim();
+    if (!searchText) {
+        alert(messages.NO_VALUE_ENTERED);
+        return;
+    }
+    try {
+        const response = await apiSearchArtists(searchText);
+        searchedArtistData = response.data;
+        defaultTextSearchArtists.hidden = true;
+        if (!searchedArtistData || !searchedArtistData.length) {
+            noRecordFoundArtists.hidden = false;
+            return;
+        }
+        noRecordFoundArtists.hidden = true;
+        renderSearchedArtistsTable();
+    } catch (error) {
+        console.log("error ::: " + error);
+        alert('Error ! : ' + error);
+    }
+}
+
 async function displaySearchedTrackById() {
+    inputSearchTracks.value = '';
     const id = inputSearchTracksById.value.trim();
     if (!id) {
         alert(messages.NO_VALUE_ENTERED);
@@ -135,6 +168,41 @@ function renderSearchedTracksTable () {
         tr.append(tdSerialNo, tdName, tdArtist, tdDuration, tdAlbum, tdDateCreated);
 
         tBodySearchTracks.append(tr);
+    }
+}
+
+function renderSearchedArtistsTable () {
+    tBodySearchArtists.innerHTML = '';
+    for (const index in searchedArtistData) {
+        const tdSerialNo = document.createElement('td');
+        const serialNo = String(Number(index) + 1);
+        const textNodeSerialNo = document.createTextNode(serialNo);
+        tdSerialNo.appendChild(textNodeSerialNo);
+
+        const tdName = document.createElement('td');
+        const textNodeName = document.createTextNode(nullDisplayHandler(searchedArtistData[index].name));
+        tdName.appendChild(textNodeName);
+
+        const tdLocation = document.createElement('td');
+        const textNodeLocation = document.createTextNode(nullDisplayHandler(searchedArtistData[index].location));
+        tdLocation.appendChild(textNodeLocation);
+
+        const tdContact = document.createElement('td');
+        const textNodeContact = document.createTextNode(nullDisplayHandler(searchedArtistData[index].contact));
+        tdContact.appendChild(textNodeContact);
+
+        const tdHandle = document.createElement('td');
+        const textNodeHandle = document.createTextNode(nullDisplayHandler(searchedArtistData[index].handle));
+        tdHandle.appendChild(textNodeHandle);
+
+        const tdActiveYearBegin = document.createElement('td');
+        const textNodeActiveYearBegin = document.createTextNode(nullDisplayHandler(searchedArtistData[index].activeYearBegin));
+        tdActiveYearBegin.appendChild(textNodeActiveYearBegin);
+
+        const tr = document.createElement('tr');
+        tr.append(tdSerialNo, tdName, tdLocation, tdContact, tdHandle, tdActiveYearBegin);
+
+        tBodySearchArtists.append(tr);
     }
 }
 
@@ -436,6 +504,13 @@ async function apiSearchTracks(searchText) {
     return await httpGet(baseUrl + tracksApiUrl + '?' + queryParams);
 }
 
+async function apiSearchArtists(searchText) {
+    const queryParams = new URLSearchParams({
+        searchText: searchText
+    });
+    return await httpGet(baseUrl + artistApiUrl + '?' + queryParams);
+}
+
 async function apiGetAllPlaylistInfo() {
     return await httpGet(baseUrl + playlistsApiUrl);
 }
@@ -458,6 +533,10 @@ async function apiDeletePlaylist(id) {
 
 async function apiGetTrackById(id) {
     return await httpGet(baseUrl + tracksApiUrl + '/' + id);
+}
+
+async function apiGetArtistById(id) {
+    return await httpGet(baseUrl + artistApiUrl + '/' + id);
 }
 
 async function httpGet(url) {

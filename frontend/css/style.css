@@ -158,7 +158,7 @@ tr:nth-child(even) {
 body {
     /*background: #F0F8FF;*/
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    margin: 20px;
+    margin: 100px;
 }
 
 .form-control {
