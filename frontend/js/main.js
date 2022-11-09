@@ -38,7 +38,7 @@ const messages = {
 
 // api urls
 // const baseUrl = 'http://localhost:3001';
-const baseUrl = 'http://54.224.130.57:3001';
+const baseUrl = 'http://54.157.26.6:3001';
 const tracksApiUrl = '/api/tracks';
 const playlistsApiUrl = '/api/playlists';
 const artistApiUrl = '/api/artists';
