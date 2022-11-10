@@ -1,1 +1,2 @@
-# ece9065-cmomodu-lab3
+# music-app
+This is a music web app built with NodeJS Backend and Vanilla Javascript Frontend
